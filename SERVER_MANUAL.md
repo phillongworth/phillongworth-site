@@ -39,7 +39,7 @@ This server uses a **LEMP** stack (Linux, Nginx, MySQL, PHP) running on Ubuntu. 
 ### Domains & Directories
 | Domain | Path on Server | Nginx Config File |
 | :--- | :--- | :--- |
-| `phillongworth.site` | `/var/www/phillongworth.site/html` | `/etc/nginx/sites-available/phillongworth.site` |
+| `phillongworth.site` | `/var/www/phillongworth-site/html` | `/etc/nginx/sites-available/phillongworth.site` |
 | `phillongworth.co.uk` | `/var/www/phillongworth.co.uk/html` | `/etc/nginx/sites-available/phillongworth.co.uk` |
 
 ### Repositories
