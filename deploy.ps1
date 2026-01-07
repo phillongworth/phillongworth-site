@@ -26,12 +26,10 @@ Write-Host "Step 2: Syncing phillongworth.co.uk..." -ForegroundColor Yellow
 & scp -q "$LOCAL_PATH\index.html" "$LOCAL_PATH\style.css" "${SERVER}:${REMOTE_PATH_COUK}"
 & scp -q -r "$LOCAL_PATH\assets" "$LOCAL_PATH\data" "$LOCAL_PATH\templates" "${SERVER}:${REMOTE_PATH_COUK}"
 
-# --- STEP 3: THE MAGIC WAND (Permissions) ---
-Write-Host "Step 3: Running the Magic Wand on both sites..." -ForegroundColor Yellow
-# This fixes ownership, permissions, and reloads Nginx in one go
-$MagicCommand = "sudo chown -R www-data:www-data $REMOTE_PATH_SITE $REMOTE_PATH_COUK && " +
-               "sudo chmod -R 775 $REMOTE_PATH_SITE $REMOTE_PATH_COUK && " +
-               "sudo systemctl reload nginx"
+Write-Host "Step 3: Updating permissions and reloading Nginx..." -ForegroundColor Yellow
+
+# We no longer need sudo for chmod/chown because 'phil' owns the folders now!
+$MagicCommand = "chmod -R 775 $REMOTE_PATH_SITE $REMOTE_PATH_COUK && sudo /usr/bin/systemctl reload nginx"
 
 & ssh $SERVER $MagicCommand
 
