@@ -4,8 +4,9 @@ $LOCAL_PATH = "."
 
 Write-Host "--- 🚀 Deployment Started ---" -ForegroundColor Cyan
 
-# 1. Uploading ONLY the web files
+# 1. Clear old file and upload new one
 Write-Host "Step 1: Syncing index.html..." -ForegroundColor Yellow
+& ssh $SERVER "rm -f $REMOTE_PATH/index.html"  # Force delete old file first
 & scp -q "$LOCAL_PATH\index.html" "${SERVER}:${REMOTE_PATH}"
 
 # If you have a CSS file, uncomment the line below by removing the '#'
