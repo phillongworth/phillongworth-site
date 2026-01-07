@@ -1,5 +1,5 @@
 $SERVER = "myserver"
-$REMOTE_PATH = "/var/www/phillongworth.site/html"
+$REMOTE_PATH = "/var/www/phillongworth-site/html"
 $LOCAL_PATH = "."
 
 Write-Host "--- 🚀 Deployment Started ---" -ForegroundColor Cyan
