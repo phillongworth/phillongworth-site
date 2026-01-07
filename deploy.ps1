@@ -13,7 +13,7 @@ Write-Host "Step 1: Syncing index.html..." -ForegroundColor Yellow
 # & scp -q "$LOCAL_PATH\style.css" "${SERVER}:${REMOTE_PATH}"
 
 # 2. Refreshing the server
-Write-Host "Step 2: Finalizing on server..." -ForegroundColor Yellow
-& ssh $SERVER "sudo chown -R www-data:www-data $REMOTE_PATH && sudo chmod -R 775 $REMOTE_PATH && sudo systemctl reload nginx"
+# Step 2 in your deploy.ps1
+& ssh $SERVER "sudo chown -R www-data:www-data /var/www/phillongworth-site/html && sudo chmod -R 775 /var/www/phillongworth-site/html && sudo systemctl reload nginx"
 
 Write-Host "--- ✅ Deployment Complete! ---" -ForegroundColor Green
