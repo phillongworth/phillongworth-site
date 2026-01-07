@@ -17,9 +17,11 @@ Changes are made locally in VS Code and "pushed" to the live server via a PowerS
 ## One-Click Deploy
 From the VS Code terminal, run:
 
-cd C:\Users\phill\OneDrive\Documents\GitHub\phillongworth-site
+``
+cd C:\Users\phill\OneDrive\Documents\GitHub\phillongworth-site``
 
-.\deploy.ps1
+``
+.\deploy.ps1``
 
 ## 💾 Database & Backups
 The server is configured to run a daily backup of the web directory and any active databases.
@@ -27,7 +29,8 @@ The server is configured to run a daily backup of the web directory and any acti
 ## Manual Backup Command
 If you want to create an instant snapshot before making big changes:
 
-tar -cvzf ~/backup_$(date +%F).tar.gz /var/www/phillongworth.site/html
+``
+tar -cvzf ~/backup_$(date +%F).tar.gz /var/www/phillongworth.site/html``
 
 
 ## 🏗 System Architecture
