@@ -2,17 +2,16 @@ $SERVER = "myserver"
 $REMOTE_PATH = "/var/www/phillongworth.site/html"
 $LOCAL_PATH = ".\"
 
-Write-Host "--- Deployment Started ---" -ForegroundColor Cyan
+Write-Host "--- 🚀 Deployment Started ---" -ForegroundColor Cyan
 
-# 1. Upload ONLY web files (index.html, css, images, etc.)
-# Note: We are excluding the .ps1 and .md files for security/cleanliness
-Write-Host "Step 1: Uploading web files..." -ForegroundColor Yellow
-& scp -q "$LOCAL_PATH\index.html" "${SERVER}:${REMOTE_PATH}"
-# If you have a CSS folder or images, add them here:
-# & scp -q -r "$LOCAL_PATH\css" "${SERVER}:${REMOTE_PATH}"
+# 1. Uploading only web-relevant files
+# This excludes the .ps1 script, .md manual, and any git folders
+Write-Host "Step 1: Syncing web files..." -ForegroundColor Yellow
+& scp -q -r "$LOCAL_PATH\*" "${SERVER}:${REMOTE_PATH}" `
+  --exclude="*.ps1" --exclude="*.md" --exclude=".git"
 
-# 2. Refresh Permissions and Nginx
-Write-Host "Step 2: Refreshing Server..." -ForegroundColor Yellow
+# 2. Refreshing the server
+Write-Host "Step 2: Finalizing on server..." -ForegroundColor Yellow
 & ssh $SERVER "sudo chown -R www-data:www-data $REMOTE_PATH && sudo chmod -R 775 $REMOTE_PATH && sudo systemctl reload nginx"
 
-Write-Host "--- ✅ Deployment Complete! ---" -ForegroundColor Green
+Write-Host "--- ✅ Deployment Complete! Site is live at https://phillongworth.site ---" -ForegroundColor Green
