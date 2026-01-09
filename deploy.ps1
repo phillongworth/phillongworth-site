@@ -22,9 +22,9 @@ Write-Host "Step 1: Syncing phillongworth.site..." -ForegroundColor Yellow
 
 # --- STEP 2: DEPLOY TO .CO.UK ---
 Write-Host "Step 2: Syncing phillongworth.co.uk..." -ForegroundColor Yellow
-# Copying the exact same files to the second domain
-& scp -q "$LOCAL_PATH\index.html" "$LOCAL_PATH\style.css" "${SERVER}:${REMOTE_PATH_COUK}"
-& scp -q -r "$LOCAL_PATH\assets" "$LOCAL_PATH\data" "$LOCAL_PATH\templates" "${SERVER}:${REMOTE_PATH_COUK}"
+# This ensures any folder you create (assets, templates, etc.) gets copied fully
+& scp -q -r "$LOCAL_PATH\assets" "${SERVER}:${REMOTE_PATH_SITE}"
+& scp -q -r "$LOCAL_PATH\assets" "${SERVER}:${REMOTE_PATH_COUK}"
 
 Write-Host "Step 3: Updating permissions and reloading Nginx..." -ForegroundColor Yellow
 
