@@ -16,19 +16,16 @@ Write-Host "Generated version: $CurrentTime" -ForegroundColor Magenta
 
 # --- STEP 1: DEPLOY TO .SITE ---
 Write-Host "Step 1: Syncing phillongworth.site..." -ForegroundColor Yellow
-# Copying files and recursive folders
-& scp -q "$LOCAL_PATH\index.html" "$LOCAL_PATH\style.css" "${SERVER}:${REMOTE_PATH_SITE}"
+# We'll use wildcards (*.css, *.js) to grab everything in your folder!
+& scp -q "$LOCAL_PATH\index.html" "$LOCAL_PATH\*.css" "$LOCAL_PATH\*.js" "${SERVER}:${REMOTE_PATH_SITE}"
 & scp -q -r "$LOCAL_PATH\assets" "$LOCAL_PATH\data" "$LOCAL_PATH\templates" "${SERVER}:${REMOTE_PATH_SITE}"
 
 # --- STEP 2: DEPLOY TO .CO.UK ---
 Write-Host "Step 2: Syncing phillongworth.co.uk..." -ForegroundColor Yellow
-# This ensures any folder you create (assets, templates, etc.) gets copied fully
-& scp -q -r "$LOCAL_PATH\assets" "${SERVER}:${REMOTE_PATH_SITE}"
-& scp -q -r "$LOCAL_PATH\assets" "${SERVER}:${REMOTE_PATH_COUK}"
-
-Write-Host "Step 3: Updating permissions and reloading Nginx..." -ForegroundColor Yellow
-
+& scp -q "$LOCAL_PATH\index.html" "$LOCAL_PATH\*.css" "$LOCAL_PATH\*.js" "${SERVER}:${REMOTE_PATH_COUK}"
+& scp -q -r "$LOCAL_PATH\assets" "$LOCAL_PATH\data" "$LOCAL_PATH\templates" "${SERVER}:${REMOTE_PATH_COUK}"
 # We no longer need sudo for chmod/chown because 'phil' owns the folders now!
+
 $MagicCommand = "chmod -R 775 $REMOTE_PATH_SITE $REMOTE_PATH_COUK && sudo /usr/bin/systemctl reload nginx"
 
 & ssh $SERVER $MagicCommand
