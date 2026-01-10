@@ -1,2 +1,3 @@
-$TARGET_DIR = "/var/www/phillongworth-site/html"
+$REMOTE_PATH = "/var/www/phillongworth-site/html"
+scp -r ./* "${SERVER}:${REMOTE_PATH}"
 # ... rest of script targeting ONLY the .site folder ...
