@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>1000m in 2025 GPX Tracks (OpenStreetMap)</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #map {
+            height: 600px;
+        }
+        #track-table, #summary-table {
+            margin-top: 20px;
+            width: 60%; /* Adjust the width as needed */
+            border-collapse: collapse;
+        }
+        #track-table th, #track-table td, #summary-table th, #summary-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #track-table th, #summary-table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+        #track-table td:nth-child(2), #track-table td:nth-child(3), #track-table td:nth-child(4),
+        #summary-table td:nth-child(2) {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <table id="track-table">
+        <thead>
+            <tr>
+                <th>Track Number</th>
+                <th>Date</th>
+                <th>Distance (miles)</th>
+                <th>Elevation Gain (feet)</th>
+            </tr>
+        </thead>
+        <tbody id="track-table-body">
+        </tbody>
+    </table>
+    <table id="summary-table">
+        <thead>
+            <tr>
+                <th>Summary</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Number of Tracks</td>
+                <td id="total-tracks">0</td>
+            </tr>
+            <tr>
+                <td>Total Distance (miles)</td>
+                <td id="total-distance">0</td>
+            </tr>
+            <tr>
+                <td>Total Elevation Gain (feet)</td>
+                <td id="total-elevation">0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-gpx/gpx.js"></script>
+    <script>
+        // Initialize the map and set its view
+        var map = L.map('map').setView([53.615, -1.910], 13);
+
+        // Add an OpenStreetMap tile layer to the map
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Conversion factors
+        var KM_TO_MILES = 0.621371;
+        var METERS_TO_FEET = 3.28084;
+
+        // Counters for summary table
+        var totalTracks = 0;
+        var totalDistance = 0;
+        var totalElevation = 0;
+
+        // Array to store track data
+        var tracksData = [];
+
+        // Function to format date
+        function formatDate(date) {
+            var options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(date).toLocaleDateString(undefined, options);
+        }
+
+        // Function to add a GPX track to the map and table
+        function addGpxTrack(gpxUrl, color, trackNumber) {
+            var gpxLayer = new L.GPX(gpxUrl, {
+                async: true,
+                polyline_options: {
+                    color: color,
+                    opacity: 0.75,
+                    weight: 3,
+                    lineCap: 'round'
+                }
+            }).on('loaded', function(e) {
+                map.fitBounds(e.target.getBounds());
+
+                // Extract distance, elevation gain, and date
+                var distanceMiles = e.target.get_distance() * KM_TO_MILES / 1000; // Convert to miles
+                var elevationGainFeet = e.target.get_elevation_gain() * METERS_TO_FEET; // Convert to feet
+                var trackDate = e.target.get_start_time() ? new Date(e.target.get_start_time()) : null;
+
+                // Store track data
+                tracksData.push({
+                    trackNumber: trackNumber,
+                    date: trackDate,
+                    distance: distanceMiles,
+                    elevationGain: elevationGainFeet,
+                    layer: e.target
+                });
+
+                // Update summary counters
+                totalTracks++;
+                totalDistance += distanceMiles;
+                totalElevation += elevationGainFeet;
+
+                // Update summary table
+                document.getElementById('total-tracks').textContent = totalTracks;
+                document.getElementById('total-distance').textContent = totalDistance.toFixed(2);
+                document.getElementById('total-elevation').textContent = totalElevation.toFixed(0);
+
+                // Sort and update table when all tracks are loaded
+                if (tracksData.length === gpxFiles.length) {
+                    updateTrackTable();
+                }
+            }).addTo(map);
+        }
+
+        // Function to update the track table with sorted data
+        function updateTrackTable() {
+            // Sort tracks by date
+            tracksData.sort((a, b) => a.date - b.date);
+
+            // Populate the table
+            var tableBody = document.getElementById('track-table-body');
+            tableBody.innerHTML = ''; // Clear existing rows
+            tracksData.forEach((track, index) => {
+                var row = tableBody.insertRow();
+                row.insertCell(0).textContent = track.trackNumber;
+                row.insertCell(1).textContent = track.date ? formatDate(track.date) : 'N/A';
+                row.insertCell(2).textContent = track.distance.toFixed(2);
+                row.insertCell(3).textContent = track.elevationGain.toFixed(0);
+
+                // Add popup to the track
+                var popupContent = `<b>Track ${track.trackNumber}</b><br>Date: ${track.date ? formatDate(track.date) : 'N/A'}<br>Distance: ${track.distance.toFixed(2)} miles<br>Elevation Gain: ${track.elevationGain.toFixed(0)} feet`;
+                track.layer.bindPopup(popupContent).openPopup();
+            });
+        }
+
+        // Add multiple GPX tracks (up to 100)
+        var gpxFiles = [
+            
+
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1001.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1002.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1003.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1004.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1005.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1006.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1007.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1008.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1009.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1010.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1011.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1012.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1013.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1014.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1015.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1016.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1017.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1018.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1019.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1020.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1021.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1022.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1023.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1024.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1025.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1026.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1027.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1028.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1029.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1030.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1031.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1032.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1033.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1034.gpx',  
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1035.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1036.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1037.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1038.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1039.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1040.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1041.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1042.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1043.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1044.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1045.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1046.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1047.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1048.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1049.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1050.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1051.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1052.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1053.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1054.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1055.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1056.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1057.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1058.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1059.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1060.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1061.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1062.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1063.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1064.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1065.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1066.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1067.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1068.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1069.gpx', 
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1070.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1071.gpx',
+        'https://raw.githubusercontent.com/phillongworth/cyclinglog/refs/heads/main/data/1072.gpx',      
+           // Add up to 100 GPX file paths here
+            // Example: 'path/to/your/track4.gpx', 'path/to/your/track5.gpx', ...
+        ];
+
+        var colors = [
+            'red', 'blue', 'green', 'black', 'yellow',
+            // Add more colors if needed 'purple', 'orange', 'brown', 'gray',
+        ];
+
+        gpxFiles.forEach((file, index) => {
+            addGpxTrack(file, colors[index % colors.length], index + 1);
+        });
+    </script>
+</body>
+</html>
