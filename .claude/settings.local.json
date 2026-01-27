@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(tree:*)",
+      "Bash(python:*)",
+      "Bash(where python3:*)",
+      "Bash(where:*)",
+      "Bash(python3:*)",
+      "Bash(py build_map_data.py:*)"
+    ]
+  }
+}
