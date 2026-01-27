@@ -7,7 +7,10 @@
       "Bash(where python3:*)",
       "Bash(where:*)",
       "Bash(python3:*)",
-      "Bash(py build_map_data.py:*)"
+      "Bash(py build_map_data.py:*)",
+      "WebFetch(domain:phillongworth.site)",
+      "Bash(cmd.exe /c \"copy /Y w:\\\\phillongworth-site\\\\data\\\\tracks.json w:\\\\phillongworth-site\\\\html\\\\data\\\\tracks.json && dir w:\\\\phillongworth-site\\\\html\\\\data\\\\tracks.json\")",
+      "Bash(powershell -Command:*)"
     ]
   }
 }
