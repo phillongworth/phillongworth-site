@@ -7,5 +7,7 @@
 			"path": "../phillongworth-co-uk"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"powershell.cwd": "phillongworth-site"
+	}
 }
