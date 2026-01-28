@@ -10,7 +10,9 @@
       "Bash(py build_map_data.py:*)",
       "WebFetch(domain:phillongworth.site)",
       "Bash(cmd.exe /c \"copy /Y w:\\\\phillongworth-site\\\\data\\\\tracks.json w:\\\\phillongworth-site\\\\html\\\\data\\\\tracks.json && dir w:\\\\phillongworth-site\\\\html\\\\data\\\\tracks.json\")",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "WebFetch(domain:www.facey-fifty.uk)",
+      "WebFetch(domain:calderdale50.wordpress.com)"
     ]
   }
 }

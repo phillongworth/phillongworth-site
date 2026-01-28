@@ -3,8 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Title - Cycling Log</title>
+    <title>Facey Fifty - Cycling Log</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        #climbs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        #climbs-table th, #climbs-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+        #climbs-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+        #climbs-table td:nth-child(3),
+        #climbs-table td:nth-child(4),
+        #climbs-table td:nth-child(5) {
+            text-align: right;
+        }
+        #climbs-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        #climbs-table a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        #climbs-table a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <main class="container">
@@ -15,14 +52,20 @@
 
         <section class="project-details">
             <img src="/assets/images/facey-fifty.png" alt="Facey Fifty" class="project-image-full">
-            <h2>Project Details</h2>
-            <p>Detailed description of the project goes here. This can include information about the challenge, the route, the distance, elevation gain, or any other relevant details.</p>
-            <h3>Key Points</h3>
-            <ul>
-                <li>Point 1</li>
-                <li>Point 2</li>
-                <li>Point 3</li>
-            </ul>
+            <div id="map"></div>
+            <table id="climbs-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Distance (mi)</th>
+                        <th>Ascent (ft)</th>
+                        <th>Gradient (%)</th>
+                        <th>Strava</th>
+                    </tr>
+                </thead>
+                <tbody id="climbs-body"></tbody>
+            </table>
             <a href="https://www.facey-fifty.uk/" class="button" target="_blank">
                 <span>View Facey Fifty website</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -36,7 +79,7 @@
 
     <footer>
         <div class="footer-content">
-           
+
             <nav>
                 <a href="#">---</a>
                 <a href="#">---</a>
@@ -45,8 +88,67 @@
             <p>This page was last updated on: <span id="last-updated"></span></p>
 
     <script src="script.js"></script>
-    
+
         </div>
     </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([53.60, -1.85], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        fetch('data/facey_fifty.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var bounds = L.latLngBounds();
+                var tableBody = document.getElementById('climbs-body');
+
+                data.climbs.forEach(function(climb) {
+                    // Map marker
+                    if (climb.lat && climb.lon) {
+                        var stravaLink = climb.strava_segments && climb.strava_segments.length
+                            ? climb.strava_segments[0].url : '';
+                        var popupHtml =
+                            '<b>' + climb.name + '</b><br>' +
+                            'Distance: ' + climb.distance_miles + ' mi<br>' +
+                            'Ascent: ' + climb.elevation_feet + ' ft<br>' +
+                            'Gradient: ' + climb.average_gradient_pct + '%' +
+                            (stravaLink ? '<br><a href="' + stravaLink + '" target="_blank">Strava segment</a>' : '');
+
+                        L.marker([climb.lat, climb.lon])
+                            .addTo(map)
+                            .bindPopup(popupHtml);
+                        bounds.extend([climb.lat, climb.lon]);
+                    }
+
+                    // Table row
+                    var row = tableBody.insertRow();
+                    row.insertCell(0).textContent = climb.number;
+
+                    var nameCell = row.insertCell(1);
+                    nameCell.textContent = climb.name.replace(/^No \d+ - /, '');
+
+                    row.insertCell(2).textContent = climb.distance_miles;
+                    row.insertCell(3).textContent = climb.elevation_feet;
+                    row.insertCell(4).textContent = climb.average_gradient_pct;
+
+                    var linkCell = row.insertCell(5);
+                    if (climb.strava_segments && climb.strava_segments.length) {
+                        var a = document.createElement('a');
+                        a.href = climb.strava_segments[0].url;
+                        a.target = '_blank';
+                        a.textContent = 'View';
+                        linkCell.appendChild(a);
+                    }
+                });
+
+                if (bounds.isValid()) {
+                    map.fitBounds(bounds, { padding: [20, 20] });
+                }
+            });
+    </script>
 </body>
 </html>
