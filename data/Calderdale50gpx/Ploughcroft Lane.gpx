@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="www.plotaroute.com" version="1.1"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata>
+<desc>Route created on plotaroute.com</desc>
+</metadata>
+<wpt lat="53.73885" lon="-1.86783">
+<time>2026-01-28T00:00:00Z</time>
+<name>Start near</name>
+<cmt>Start near 55 Ploughcroft Lane, Halifax, West Yorkshire HX3, UK</cmt>
+<desc>Start near 55 Ploughcroft Lane, Halifax, West Yorkshire HX3, UK</desc>
+<sym>Flag, Blue</sym>
+<type>Waypoint</type>
+</wpt>
+<wpt lat="53.73885" lon="-1.86783">
+<time>2026-01-28T00:00:00Z</time>
+<name>Head north</name>
+<cmt>Head northeast on Ploughcroft Ln toward Pule Green Ln</cmt>
+<desc>Head northeast on Ploughcroft Ln toward Pule Green Ln</desc>
+<sym>Straight</sym>
+<type>Waypoint</type>
+</wpt>
+<wpt lat="53.74112" lon="-1.86131">
+<time>2026-01-28T00:01:31Z</time>
+<name>FINISH</name>
+<cmt>FINISH</cmt>
+<desc>FINISH</desc>
+<sym>Flag, Blue</sym>
+<type>Waypoint</type>
+</wpt>
+<trk>
+<name>Ploughcroft Lane</name>
+<trkseg>
+<trkpt lat="53.73885" lon="-1.86783">
+<ele>216</ele>
+<time>2026-01-28T00:00:00Z</time></trkpt>
+<trkpt lat="53.73885" lon="-1.86783">
+<ele>216</ele>
+<time>2026-01-28T00:00:00Z</time></trkpt>
+<trkpt lat="53.73921" lon="-1.86671">
+<ele>228</ele>
+<time>2026-01-28T00:00:15Z</time></trkpt>
+<trkpt lat="53.73939" lon="-1.86616">
+<ele>235</ele>
+<time>2026-01-28T00:00:23Z</time></trkpt>
+<trkpt lat="53.73942" lon="-1.86604">
+<ele>236</ele>
+<time>2026-01-28T00:00:24Z</time></trkpt>
+<trkpt lat="53.73949" lon="-1.86561">
+<ele>240</ele>
+<time>2026-01-28T00:00:29Z</time></trkpt>
+<trkpt lat="53.73953" lon="-1.86534">
+<ele>243</ele>
+<time>2026-01-28T00:00:33Z</time></trkpt>
+<trkpt lat="53.73958" lon="-1.86506">
+<ele>246</ele>
+<time>2026-01-28T00:00:36Z</time></trkpt>
+<trkpt lat="53.7397" lon="-1.86449">
+<ele>253</ele>
+<time>2026-01-28T00:00:43Z</time></trkpt>
+<trkpt lat="53.7398" lon="-1.86417">
+<ele>258</ele>
+<time>2026-01-28T00:00:48Z</time></trkpt>
+<trkpt lat="53.73991" lon="-1.86381">
+<ele>262</ele>
+<time>2026-01-28T00:00:52Z</time></trkpt>
+<trkpt lat="53.74" lon="-1.86358">
+<ele>266</ele>
+<time>2026-01-28T00:00:56Z</time></trkpt>
+<trkpt lat="53.74008" lon="-1.86342">
+<ele>268</ele>
+<time>2026-01-28T00:00:58Z</time></trkpt>
+<trkpt lat="53.74018" lon="-1.86323">
+<ele>270</ele>
+<time>2026-01-28T00:01:01Z</time></trkpt>
+<trkpt lat="53.74026" lon="-1.86308">
+<ele>272</ele>
+<time>2026-01-28T00:01:04Z</time></trkpt>
+<trkpt lat="53.74038" lon="-1.86288">
+<ele>275</ele>
+<time>2026-01-28T00:01:07Z</time></trkpt>
+<trkpt lat="53.74056" lon="-1.86263">
+<ele>279</ele>
+<time>2026-01-28T00:01:12Z</time></trkpt>
+<trkpt lat="53.74069" lon="-1.86241">
+<ele>280</ele>
+<time>2026-01-28T00:01:15Z</time></trkpt>
+<trkpt lat="53.74077" lon="-1.86227">
+<ele>280</ele>
+<time>2026-01-28T00:01:18Z</time></trkpt>
+<trkpt lat="53.74081" lon="-1.86219">
+<ele>280</ele>
+<time>2026-01-28T00:01:19Z</time></trkpt>
+<trkpt lat="53.74097" lon="-1.86188">
+<ele>281</ele>
+<time>2026-01-28T00:01:24Z</time></trkpt>
+<trkpt lat="53.74106" lon="-1.86164">
+<ele>280</ele>
+<time>2026-01-28T00:01:27Z</time></trkpt>
+<trkpt lat="53.7411" lon="-1.86149">
+<ele>280</ele>
+<time>2026-01-28T00:01:29Z</time></trkpt>
+<trkpt lat="53.7411" lon="-1.86146">
+<ele>280</ele>
+<time>2026-01-28T00:01:29Z</time></trkpt>
+<trkpt lat="53.74112" lon="-1.86131">
+<ele>280</ele>
+<time>2026-01-28T00:01:31Z</time></trkpt>
+</trkseg>
+</trk>
+</gpx>

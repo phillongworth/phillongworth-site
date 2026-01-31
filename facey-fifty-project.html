@@ -100,24 +100,35 @@
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
+        var colors = ['#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4',
+                      '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990'];
+
         fetch('data/facey_fifty.json')
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 var bounds = L.latLngBounds();
                 var tableBody = document.getElementById('climbs-body');
 
-                data.climbs.forEach(function(climb) {
-                    // Map marker
-                    if (climb.lat && climb.lon) {
-                        var stravaLink = climb.strava_segments && climb.strava_segments.length
-                            ? climb.strava_segments[0].url : '';
-                        var popupHtml =
-                            '<b>' + climb.name + '</b><br>' +
-                            'Distance: ' + climb.distance_miles + ' mi<br>' +
-                            'Ascent: ' + climb.elevation_feet + ' ft<br>' +
-                            'Gradient: ' + climb.average_gradient_pct + '%' +
-                            (stravaLink ? '<br><a href="' + stravaLink + '" target="_blank">Strava segment</a>' : '');
+                data.climbs.forEach(function(climb, index) {
+                    var stravaLink = climb.strava_segments && climb.strava_segments.length
+                        ? climb.strava_segments[0].url : '';
+                    var popupHtml =
+                        '<b>' + climb.name + '</b>';
+                    if (climb.distance_miles) popupHtml += '<br>Distance: ' + climb.distance_miles + ' mi';
+                    if (climb.elevation_feet) popupHtml += '<br>Ascent: ' + climb.elevation_feet + ' ft';
+                    if (climb.average_gradient_pct) popupHtml += '<br>Gradient: ' + climb.average_gradient_pct + '%';
+                    if (stravaLink) popupHtml += '<br><a href="' + stravaLink + '" target="_blank">Strava segment</a>';
 
+                    // Draw track polyline if available, otherwise fall back to marker
+                    if (climb.track && climb.track.length > 1) {
+                        var color = colors[index % colors.length];
+                        var polyline = L.polyline(climb.track, {
+                            color: color,
+                            opacity: 0.8,
+                            weight: 3
+                        }).addTo(map).bindPopup(popupHtml);
+                        bounds.extend(polyline.getBounds());
+                    } else if (climb.lat && climb.lon) {
                         L.marker([climb.lat, climb.lon])
                             .addTo(map)
                             .bindPopup(popupHtml);

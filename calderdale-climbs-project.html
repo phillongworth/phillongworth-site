@@ -125,26 +125,27 @@
                 var othersBody = document.getElementById('others-body');
                 var othersCount = 0;
 
-                data.climbs.forEach(function(climb) {
-                    // Map marker
-                    if (climb.lat && climb.lon) {
-                        var popupHtml = '<b>' + climb.name + '</b>';
-                        if (climb.area) popupHtml += '<br>' + climb.area;
-                        if (climb.distance_miles) popupHtml += '<br>Distance: ' + climb.distance_miles + ' mi';
-                        if (climb.ascent_feet) popupHtml += '<br>Ascent: ' + climb.ascent_feet + ' ft';
-                        if (climb.average_gradient_pct) popupHtml += '<br>Gradient: ' + climb.average_gradient_pct + '%';
-                        if (climb.plotaroute_url) popupHtml += '<br><a href="' + climb.plotaroute_url + '" target="_blank">Route map</a>';
-                        if (climb.url) popupHtml += '<br><a href="' + climb.url + '" target="_blank">Details</a>';
+                var colors = ['#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4',
+                              '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990'];
 
-                        var color = climb.category === 'other' ? 'gray' : 'blue';
-                        L.circleMarker([climb.lat, climb.lon], {
-                            radius: 7,
-                            fillColor: color,
-                            color: '#fff',
-                            weight: 1,
-                            fillOpacity: 0.8
+                data.climbs.forEach(function(climb, index) {
+                    var popupHtml = '<b>' + climb.name + '</b>';
+                    if (climb.area) popupHtml += '<br>' + climb.area;
+                    if (climb.distance_miles) popupHtml += '<br>Distance: ' + climb.distance_miles + ' mi';
+                    if (climb.ascent_feet) popupHtml += '<br>Ascent: ' + climb.ascent_feet + ' ft';
+                    if (climb.average_gradient_pct) popupHtml += '<br>Gradient: ' + climb.average_gradient_pct + '%';
+                    if (climb.plotaroute_url) popupHtml += '<br><a href="' + climb.plotaroute_url + '" target="_blank">Route map</a>';
+                    if (climb.url) popupHtml += '<br><a href="' + climb.url + '" target="_blank">Details</a>';
+
+                    // Draw track polyline if available (skip climbs without tracks)
+                    if (climb.track && climb.track.length > 1) {
+                        var color = colors[index % colors.length];
+                        var polyline = L.polyline(climb.track, {
+                            color: color,
+                            opacity: 0.8,
+                            weight: 3
                         }).addTo(map).bindPopup(popupHtml);
-                        bounds.extend([climb.lat, climb.lon]);
+                        bounds.extend(polyline.getBounds());
                     }
 
                     if (climb.category === 'main') {

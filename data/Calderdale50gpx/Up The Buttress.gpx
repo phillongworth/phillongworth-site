@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="www.plotaroute.com" version="1.1"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata>
+<desc>Route created on plotaroute.com</desc>
+</metadata>
+<wpt lat="53.744755" lon="-2.0163131">
+<time>2026-01-28T00:00:59Z</time>
+<name>FINISH</name>
+<cmt>FINISH</cmt>
+<desc>FINISH</desc>
+<sym>Flag, Blue</sym>
+<type>Waypoint</type>
+</wpt>
+<trk>
+<name>Up The Buttress</name>
+<trkseg>
+<trkpt lat="53.7423042" lon="-2.0137569">
+<ele>101</ele>
+<time>2026-01-28T00:00:00Z</time></trkpt>
+<trkpt lat="53.7424838" lon="-2.0139494">
+<ele>104</ele>
+<time>2026-01-28T00:00:04Z</time></trkpt>
+<trkpt lat="53.7425473" lon="-2.0141063">
+<ele>108</ele>
+<time>2026-01-28T00:00:07Z</time></trkpt>
+<trkpt lat="53.7426203" lon="-2.0142753">
+<ele>111</ele>
+<time>2026-01-28T00:00:09Z</time></trkpt>
+<trkpt lat="53.7426841" lon="-2.0144369">
+<ele>114</ele>
+<time>2026-01-28T00:00:11Z</time></trkpt>
+<trkpt lat="53.7427571" lon="-2.0145938">
+<ele>117</ele>
+<time>2026-01-28T00:00:14Z</time></trkpt>
+<trkpt lat="53.7428229" lon="-2.0147031">
+<ele>120</ele>
+<time>2026-01-28T00:00:16Z</time></trkpt>
+<trkpt lat="53.7429082" lon="-2.0148191">
+<ele>123</ele>
+<time>2026-01-28T00:00:18Z</time></trkpt>
+<trkpt lat="53.7429685" lon="-2.0148955">
+<ele>125</ele>
+<time>2026-01-28T00:00:19Z</time></trkpt>
+<trkpt lat="53.7430501" lon="-2.0149693">
+<ele>127</ele>
+<time>2026-01-28T00:00:21Z</time></trkpt>
+<trkpt lat="53.7431239" lon="-2.0150377">
+<ele>129</ele>
+<time>2026-01-28T00:00:23Z</time></trkpt>
+<trkpt lat="53.7432056" lon="-2.0150893">
+<ele>131</ele>
+<time>2026-01-28T00:00:25Z</time></trkpt>
+<trkpt lat="53.7432909" lon="-2.0151456">
+<ele>133</ele>
+<time>2026-01-28T00:00:26Z</time></trkpt>
+<trkpt lat="53.7433741" lon="-2.0152013">
+<ele>135</ele>
+<time>2026-01-28T00:00:28Z</time></trkpt>
+<trkpt lat="53.7434562" lon="-2.015257">
+<ele>137</ele>
+<time>2026-01-28T00:00:30Z</time></trkpt>
+<trkpt lat="53.7435478" lon="-2.0153173">
+<ele>140</ele>
+<time>2026-01-28T00:00:32Z</time></trkpt>
+<trkpt lat="53.7436331" lon="-2.015375">
+<ele>142</ele>
+<time>2026-01-28T00:00:34Z</time></trkpt>
+<trkpt lat="53.7437211" lon="-2.0154313">
+<ele>144</ele>
+<time>2026-01-28T00:00:36Z</time></trkpt>
+<trkpt lat="53.7438187" lon="-2.0154957">
+<ele>146</ele>
+<time>2026-01-28T00:00:38Z</time></trkpt>
+<trkpt lat="53.7439111" lon="-2.015554">
+<ele>147</ele>
+<time>2026-01-28T00:00:40Z</time></trkpt>
+<trkpt lat="53.7440011" lon="-2.015615">
+<ele>150</ele>
+<time>2026-01-28T00:00:42Z</time></trkpt>
+<trkpt lat="53.7440907" lon="-2.015674">
+<ele>152</ele>
+<time>2026-01-28T00:00:44Z</time></trkpt>
+<trkpt lat="53.7441843" lon="-2.0157505">
+<ele>154</ele>
+<time>2026-01-28T00:00:46Z</time></trkpt>
+<trkpt lat="53.7442771" lon="-2.0158343">
+<ele>156</ele>
+<time>2026-01-28T00:00:48Z</time></trkpt>
+<trkpt lat="53.7443687" lon="-2.0159181">
+<ele>159</ele>
+<time>2026-01-28T00:00:50Z</time></trkpt>
+<trkpt lat="53.7444603" lon="-2.0160019">
+<ele>162</ele>
+<time>2026-01-28T00:00:52Z</time></trkpt>
+<trkpt lat="53.7445416" lon="-2.0160831">
+<ele>164</ele>
+<time>2026-01-28T00:00:54Z</time></trkpt>
+<trkpt lat="53.7446301" lon="-2.0161729">
+<ele>167</ele>
+<time>2026-01-28T00:00:56Z</time></trkpt>
+<trkpt lat="53.7447113" lon="-2.0162641">
+<ele>169</ele>
+<time>2026-01-28T00:00:58Z</time></trkpt>
+<trkpt lat="53.744755" lon="-2.0163131">
+<ele>170</ele>
+<time>2026-01-28T00:00:59Z</time></trkpt>
+</trkseg>
+</trk>
+</gpx>
