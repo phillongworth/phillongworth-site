@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calderdale Bridleways Map - Cycling Log</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #app {
+            display: flex;
+            height: 100vh;
+        }
+
+        #sidebar {
+            width: 320px;
+            background: #f8f9fa;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #dee2e6;
+        }
+
+        #sidebar h1 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #2d5016;
+        }
+
+        #sidebar h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #6c757d;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-section,
+        .coverage-section,
+        .unit-toggle {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .coverage-section label,
+        .unit-toggle label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: #495057;
+        }
+
+        .radio-group {
+            background: white;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 15px;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .radio-group label:hover {
+            background: #f8f9fa;
+        }
+
+        .radio-group input[type="radio"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #2d5016;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1e3a0f;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background: #6c757d;
+            color: white;
+            margin-top: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .nav-section {
+            padding-top: 15px;
+        }
+
+        .nav-section .btn {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        /* Stats panel */
+        #stats-panel {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        #stats-panel .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        #stats-panel .stat-label {
+            color: #6c757d;
+        }
+
+        #stats-panel .stat-value {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        #stats-panel .stat-highlight {
+            background: #e8f5e9;
+            margin: 5px -8px;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        #stats-panel .stat-highlight .stat-value {
+            color: #2d5016;
+            font-size: 1.1em;
+        }
+
+        #stats-panel .stat-group {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        #stats-panel .stat-group-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        #stats-panel .stat-subrow {
+            padding-left: 15px;
+            font-size: 0.85em;
+        }
+
+        #stats-panel .stat-subrow .stat-label {
+            font-style: italic;
+        }
+
+        .status-ridden {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .status-not-ridden {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .unit-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .unit-toggle input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+        }
+
+        #map {
+            flex: 1;
+            height: 100%;
+        }
+
+        /* Leaflet popup styling */
+        .leaflet-popup-content {
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .leaflet-popup-content strong {
+            color: #2d5016;
+        }
+
+        .path-popup-content {
+            min-width: 200px;
+        }
+
+        .path-popup-content .popup-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .path-popup-content .popup-row:last-child {
+            border-bottom: none;
+        }
+
+        .path-popup-content .popup-label {
+            color: #6c757d;
+        }
+
+        .path-popup-content .popup-divider {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        /* Legend */
+        .legend {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            font-size: 0.8rem;
+            line-height: 1.8;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        /* Layer toggles control */
+        .layer-toggles {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            font-size: 0.8rem;
+        }
+
+        .layer-toggles strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .layer-toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            cursor: pointer;
+        }
+
+        .layer-toggle-item:hover {
+            background: #f8f9fa;
+            margin: 0 -8px;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+
+        .layer-toggle-item input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .toggle-color {
+            width: 16px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .layer-divider {
+            margin: 8px 0;
+            border: none;
+            border-top: 1px solid #ddd;
+        }
+
+        .layer-toggle-item input[type="radio"] {
+            width: 14px;
+            height: 14px;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            #app {
+                flex-direction: column;
+            }
+
+            #sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 40vh;
+                border-right: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+
+            #map {
+                height: 60vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="sidebar">
+            <h1>Calderdale Bridleways</h1>
+
+            <div class="coverage-section">
+                <h3>Coverage Status</h3>
+                <div class="radio-group" id="ridden-filter">
+                    <label>
+                        <input type="radio" name="ridden" value="all" checked>
+                        All bridleways
+                    </label>
+                    <label>
+                        <input type="radio" name="ridden" value="ridden">
+                        Ridden only
+                    </label>
+                    <label>
+                        <input type="radio" name="ridden" value="not_ridden">
+                        Not ridden only
+                    </label>
+                </div>
+            </div>
+
+            <div class="stats-section">
+                <h3>Statistics</h3>
+                <div id="stats-panel">
+                    <p>Loading...</p>
+                </div>
+            </div>
+
+            <div class="unit-toggle">
+                <label>
+                    <input type="checkbox" id="unit-toggle">
+                    Show distances in miles
+                </label>
+            </div>
+
+            <div class="nav-section">
+                <a href="https://map.phillongworth.site/bridleway/" class="btn btn-primary">Open Full Bridleway Log</a>
+                <a href="calderdale-bridleways-project.html" class="btn btn-secondary">&larr; Back to Project</a>
+            </div>
+        </div>
+
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const API_BASE = 'https://map.phillongworth.site/bridleway/api';
+
+        // Coverage colors (matching bridleway log)
+        const RIDDEN_COLOR = '#f59e0b';
+        const NOT_RIDDEN_COLOR = '#2563eb';
+        const FILTERED_COLOR = '#8b5cf6';
+
+        // State
+        let map;
+        let pathsLayer;
+        let useImperial = false;
+        let currentRiddenFilter = 'all';
+        let currentBaseLayer;
+
+        // Base map tile layers
+        const baseMaps = {
+            osm: {
+                name: 'OpenStreetMap',
+                layer: () => L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+                    maxZoom: 19
+                })
+            },
+            topo: {
+                name: 'OpenTopoMap',
+                layer: () => L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+                    maxZoom: 17
+                })
+            },
+            cycle: {
+                name: 'CyclOSM',
+                layer: () => L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.cyclosm.org">CyclOSM</a> &copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+                    maxZoom: 20
+                })
+            },
+            esriSat: {
+                name: 'Satellite',
+                layer: () => L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '&copy; <a href="https://www.esri.com">Esri</a> &mdash; Sources: Esri, Maxar, Earthstar Geographics',
+                    maxZoom: 19
+                })
+            },
+            hybrid: {
+                name: 'Satellite + Roads',
+                layer: () => L.layerGroup([
+                    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: '&copy; <a href="https://www.esri.com">Esri</a>',
+                        maxZoom: 19
+                    }),
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+                        maxZoom: 19,
+                        opacity: 0.4
+                    })
+                ])
+            }
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            loadStats();
+            loadPaths(true);
+            setupEventListeners();
+        });
+
+        function initMap() {
+            map = L.map('map').setView([53.765, -1.99], 12);
+
+            currentBaseLayer = baseMaps.osm.layer();
+            currentBaseLayer.addTo(map);
+
+            pathsLayer = L.geoJSON(null, {
+                style: styleFeature,
+                onEachFeature: onEachFeature
+            }).addTo(map);
+
+            addLegend();
+            addLayerToggles();
+        }
+
+        function switchBaseMap(mapKey) {
+            if (currentBaseLayer) {
+                map.removeLayer(currentBaseLayer);
+            }
+            currentBaseLayer = baseMaps[mapKey].layer();
+            currentBaseLayer.addTo(map);
+            currentBaseLayer.bringToBack();
+        }
+
+        function styleFeature(feature) {
+            const props = feature.properties;
+            const isRidden = props.is_ridden || false;
+            const coverage = props.coverage_fraction || 0;
+
+            if (currentRiddenFilter === 'ridden' || currentRiddenFilter === 'not_ridden') {
+                return {
+                    color: FILTERED_COLOR,
+                    weight: 3,
+                    opacity: 0.8
+                };
+            }
+
+            const baseColor = isRidden ? RIDDEN_COLOR : NOT_RIDDEN_COLOR;
+            const opacity = isRidden ? (0.5 + (coverage * 0.5)) : 0.7;
+
+            return {
+                color: baseColor,
+                weight: 3,
+                opacity: opacity
+            };
+        }
+
+        function onEachFeature(feature, layer) {
+            const props = feature.properties;
+            const length = formatDistance(props.length_km);
+            const coverage = props.coverage_fraction ? (props.coverage_fraction * 100).toFixed(0) : '0';
+            const lastRidden = props.last_ridden_date
+                ? new Date(props.last_ridden_date).toLocaleDateString('en-GB')
+                : 'Never';
+
+            const content = `
+                <div class="path-popup-content">
+                    <div class="popup-row">
+                        <span class="popup-label">Name:</span>
+                        <strong>${props.name || 'Unnamed'}</strong>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Type:</span>
+                        <span>${props.path_type || 'Unknown'}</span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Route Code:</span>
+                        <span>${props.route_code || '-'}</span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Length:</span>
+                        <span>${length}</span>
+                    </div>
+                    <div class="popup-row popup-divider">
+                        <span class="popup-label">Ridden:</span>
+                        <span class="${props.is_ridden ? 'status-ridden' : 'status-not-ridden'}">
+                            ${props.is_ridden ? 'Yes' : 'No'}
+                        </span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Coverage:</span>
+                        <span>${coverage}%</span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Last Ridden:</span>
+                        <span>${lastRidden}</span>
+                    </div>
+                </div>
+            `;
+
+            layer.bindPopup(content);
+        }
+
+        function addLegend() {
+            const legend = L.control({ position: 'bottomright' });
+
+            legend.onAdd = function() {
+                const div = L.DomUtil.create('div', 'legend');
+                div.innerHTML = `
+                    <strong>Coverage Status</strong><br>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: ${RIDDEN_COLOR}"></span>
+                        <span>Ridden</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: ${NOT_RIDDEN_COLOR}"></span>
+                        <span>Not Ridden</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: ${FILTERED_COLOR}"></span>
+                        <span>Filtered</span>
+                    </div>
+                `;
+                return div;
+            };
+
+            legend.addTo(map);
+        }
+
+        function addLayerToggles() {
+            const control = L.control({ position: 'topright' });
+
+            control.onAdd = function() {
+                const div = L.DomUtil.create('div', 'layer-toggles');
+
+                const baseMapOptions = Object.entries(baseMaps).map(([key, config]) => `
+                    <label class="layer-toggle-item">
+                        <input type="radio" name="basemap" value="${key}" ${key === 'osm' ? 'checked' : ''}>
+                        <span>${config.name}</span>
+                    </label>
+                `).join('');
+
+                div.innerHTML = `
+                    <strong>Overlays</strong>
+                    <label class="layer-toggle-item">
+                        <input type="checkbox" id="toggle-bridleways" checked>
+                        <span class="toggle-color" style="background: ${NOT_RIDDEN_COLOR}"></span>
+                        <span>Bridleways</span>
+                    </label>
+                    <hr class="layer-divider">
+                    <strong>Base Map</strong>
+                    ${baseMapOptions}
+                `;
+
+                L.DomEvent.disableClickPropagation(div);
+                return div;
+            };
+
+            control.addTo(map);
+
+            setTimeout(() => {
+                document.getElementById('toggle-bridleways').addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        map.addLayer(pathsLayer);
+                    } else {
+                        map.removeLayer(pathsLayer);
+                    }
+                });
+
+                document.querySelectorAll('input[name="basemap"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        switchBaseMap(e.target.value);
+                    });
+                });
+            }, 0);
+        }
+
+        async function loadStats() {
+            const panel = document.getElementById('stats-panel');
+
+            try {
+                const res = await fetch(`${API_BASE}/stats`);
+                const stats = await res.json();
+
+                const totalLength = formatDistance(stats.total_length_km);
+                const riddenLength = formatDistance(stats.ridden_length_km);
+                const notRiddenLength = formatDistance(stats.not_ridden_length_km);
+
+                const overallCoverage = stats.total_paths > 0
+                    ? ((stats.ridden_paths / stats.total_paths) * 100).toFixed(1)
+                    : '0.0';
+
+                let html = `
+                    <div class="stat-row">
+                        <span class="stat-label">Total Bridleways</span>
+                        <span class="stat-value">${stats.total_paths.toLocaleString()}</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Total Length</span>
+                        <span class="stat-value">${totalLength}</span>
+                    </div>
+                    <div class="stat-row stat-highlight">
+                        <span class="stat-label">Overall Coverage</span>
+                        <span class="stat-value">${overallCoverage}%</span>
+                    </div>
+                    <div class="stat-group">
+                        <div class="stat-group-title">Coverage</div>
+                        <div class="stat-row">
+                            <span class="stat-label status-ridden">Ridden</span>
+                            <span class="stat-value">${stats.ridden_paths} (${riddenLength})</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label status-not-ridden">Not Ridden</span>
+                            <span class="stat-value">${stats.not_ridden_paths} (${notRiddenLength})</span>
+                        </div>
+                    </div>
+                `;
+
+                if (Object.keys(stats.by_type).length > 0) {
+                    html += '<div class="stat-group"><div class="stat-group-title">By Type</div>';
+                    for (const [type, data] of Object.entries(stats.by_type)) {
+                        const length = formatDistance(data.length_km);
+                        const riddenCount = data.ridden_count || 0;
+                        const typeRiddenLength = formatDistance(data.ridden_length_km || 0);
+                        html += `
+                            <div class="stat-row">
+                                <span class="stat-label">${type}</span>
+                                <span class="stat-value">${data.count} (${length})</span>
+                            </div>
+                            <div class="stat-row stat-subrow">
+                                <span class="stat-label">Ridden</span>
+                                <span class="stat-value">${riddenCount} (${typeRiddenLength})</span>
+                            </div>
+                        `;
+                    }
+                    html += '</div>';
+                }
+
+                panel.innerHTML = html;
+            } catch (err) {
+                console.error('Error loading stats:', err);
+                panel.innerHTML = '<p>Error loading statistics</p>';
+            }
+        }
+
+        async function loadPaths(fitBounds = false) {
+            const riddenFilter = document.querySelector('input[name="ridden"]:checked')?.value || 'all';
+            currentRiddenFilter = riddenFilter;
+
+            try {
+                const params = new URLSearchParams();
+
+                if (riddenFilter === 'ridden') {
+                    params.append('ridden', 'true');
+                } else if (riddenFilter === 'not_ridden') {
+                    params.append('ridden', 'false');
+                }
+
+                const url = `${API_BASE}/paths${params.toString() ? '?' + params.toString() : ''}`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                pathsLayer.clearLayers();
+                pathsLayer.addData(data);
+
+                if (fitBounds && data.features.length > 0) {
+                    map.fitBounds(pathsLayer.getBounds(), { padding: [20, 20] });
+                }
+            } catch (err) {
+                console.error('Error loading paths:', err);
+            }
+        }
+
+        function setupEventListeners() {
+            // Coverage status radio buttons
+            document.querySelectorAll('input[name="ridden"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    loadPaths();
+                });
+            });
+
+            // Unit toggle
+            document.getElementById('unit-toggle').addEventListener('change', (e) => {
+                useImperial = e.target.checked;
+                loadStats();
+                loadPaths();
+            });
+        }
+
+        function formatDistance(km) {
+            if (km === null || km === undefined) return '-';
+
+            if (useImperial) {
+                const miles = km * 0.621371;
+                return `${miles.toFixed(2)} mi`;
+            }
+            return `${km.toFixed(2)} km`;
+        }
+    </script>
+</body>
+</html>
