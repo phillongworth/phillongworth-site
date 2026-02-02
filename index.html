@@ -5,6 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cycling Log</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .project-card {
+            border: none;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+
+        .project-card .project-content {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-card .project-content h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .project-card .project-content p {
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+            font-size: 0.95rem;
+        }
+
+        .project-card .button {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            backdrop-filter: blur(4px);
+        }
+
+        .project-card .button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .card-teal { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+        .card-indigo { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+        .card-amber { background: linear-gradient(135deg, #d97706, #f59e0b); }
+        .card-rose { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+        .card-emerald { background: linear-gradient(135deg, #059669, #10b981); }
+        .card-slate { background: linear-gradient(135deg, #475569, #64748b); }
+    </style>
 </head>
 <body>
     <main class="container">
@@ -30,13 +84,10 @@
         <section class="projects">
             <h2>Projects</h2>
             <div class="project-grid">
-                
-                <article class="project-card">
-                    <div class="project-image">
-                        <img src="assets/images/1000miles.png" alt="1000/10,000 feet in 2025" loading="lazy">
-                    </div>
+
+                <article class="project-card card-teal">
                     <div class="project-content">
-                        <h3>1000/10,000 feet in 2025</h3>
+                        <h3>1000/10,000 in 2025</h3>
                         <p>Riding 1,000 miles with 10,000 feet of climbing in 2025.</p>
                         <a href="1000-miles-project.html" class="button">
                             <span>View Project</span>
@@ -45,26 +96,18 @@
                     </div>
                 </article>
 
-                <article class="project-card">
-                    <div class="project-image">
-                        <img src="assets/images/calderdale-bridleways.png" alt="Calderdale Bridleways">
-                    </div>
+                <article class="project-card card-indigo">
                     <div class="project-content">
                         <h3>Calderdale Bridleways</h3>
-                        <p>Riding all the Bridleways in Calderdale.</p>
+                        <p>Riding all the bridleways in Calderdale.</p>
                         <a href="calderdale-bridleways-project.html" class="button">
                             <span>View Project</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                         </a>
                     </div>
-
-
                 </article>
 
-                <article class="project-card">
-                    <div class="project-image">
-                        <img src="assets/images/calderdale-bridleways.png" alt="Bridleway Log" loading="lazy">
-                    </div>
+                <article class="project-card card-amber">
                     <div class="project-content">
                         <h3>Bridleway Log</h3>
                         <p>Interactive map to track progress riding bridleways and rights of way.</p>
@@ -75,10 +118,7 @@
                     </div>
                 </article>
 
-                <article class="project-card">
-                    <div class="project-image">
-                        <img src="assets/images/calderdale-50.png" alt="The Calderdale 50 Climbs" loading="lazy">
-                    </div>
+                <article class="project-card card-rose">
                     <div class="project-content">
                         <h3>The Calderdale 50 Climbs</h3>
                         <p>Riding all the major climbs in Calderdale.</p>
@@ -89,10 +129,7 @@
                     </div>
                 </article>
 
-                <article class="project-card">
-                    <div class="project-image">
-                        <img src="assets/images/facey-fifty.png" alt="Facey 50" loading="lazy">
-                    </div>
+                <article class="project-card card-emerald">
                     <div class="project-content">
                         <h3>Facey 50</h3>
                         <p>Facey 50 Climbs in the Colne and Holme Valleys.</p>
@@ -103,53 +140,24 @@
                     </div>
                 </article>
 
-                
-                <article class="project-card">
-                    <div class="project-image">
-                        <img src="/placeholder.svg?height=400&width=600" alt="Project 3" loading="lazy">
-                    </div>
+                <article class="project-card card-slate">
                     <div class="project-content">
                         <h3>Tools</h3>
-                        <p>Description of Project 3.</p>
+                        <p>Useful cycling tools and utilities.</p>
                         <a href="tools.html" class="button">
-                            <span>View Project</span>
+                            <span>View Tools</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                         </a>
                     </div>
                 </article>
+
             </div>
         </section>
     </main>
 
-<section class="gallery-container">
-    <h2>My Projects</h2>
-    <div class="project-grid">
-        
-        <div class="project-card">
-            <img src="assets/images/1000miles.png" alt="Project One">
-            <div class="card-content">
-                <h3>Project Title One</h3>
-                <p>A brief description of what this project is about.</p>
-            </div>
-        </div>
-
-        <div class="project-card">
-            <img src="assets/images/facey-fifty.png" alt="Project Two">
-            <div class="card-content">
-                <h3>Project Title Two</h3>
-                <p>Another interesting project description goes here.</p>
-            </div>
-        </div>
-
-    </div>
-</section>
-
-
-
-
     <footer>
         <div class="footer-content">
-           
+
             <nav>
                 <a href="#">---</a>
                 <a href="#">---</a>

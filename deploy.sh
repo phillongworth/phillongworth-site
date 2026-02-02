@@ -10,7 +10,6 @@ files=(
     "style.css"
     "script.js"
     "tools.html"
-    "1000-miles-map.html"
     "1000-miles-project.html"
     "calderdale-bridleways-project.html"
     "calderdale-climbs-project.html"

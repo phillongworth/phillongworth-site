@@ -203,25 +203,35 @@ footer a:hover {
 /* Project page specific styles */
 .project-header {
     text-align: center;
-    padding: 2rem 0;
+    padding: 3rem 1.5rem;
+    border-radius: 0.75rem;
+    margin-bottom: 2rem;
 }
 
 .project-header h1 {
     font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
 }
+
+.project-header p {
+    color: rgba(255,255,255,0.85);
+    font-size: 1.1rem;
+}
+
+/* Project header colour variants */
+.header-teal { background: linear-gradient(135deg, #0d9488, #14b8a6); }
+.header-indigo { background: linear-gradient(135deg, #4f46e5, #6366f1); }
+.header-amber { background: linear-gradient(135deg, #d97706, #f59e0b); }
+.header-rose { background: linear-gradient(135deg, #e11d48, #f43f5e); }
+.header-emerald { background: linear-gradient(135deg, #059669, #10b981); }
+.header-slate { background: linear-gradient(135deg, #475569, #64748b); }
 
 .project-details {
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem 0;
-}
-
-.project-image-full {
-    width: 50%;
-    height: auto;
-    border-radius: 0.5rem;
-    margin-bottom: 2rem;
 }
 
 .back-link {

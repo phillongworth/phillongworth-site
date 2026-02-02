@@ -13,7 +13,9 @@
       "Bash(powershell -Command:*)",
       "WebFetch(domain:www.facey-fifty.uk)",
       "WebFetch(domain:calderdale50.wordpress.com)",
-      "WebFetch(domain:www.doogal.co.uk)"
+      "WebFetch(domain:www.doogal.co.uk)",
+      "Bash(curl:*)",
+      "Bash(docker compose up:*)"
     ]
   }
 }

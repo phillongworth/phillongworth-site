@@ -3,36 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Title - Cycling Log</title>
+    <title>1000 Miles - Cycling Log</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        #track-table, #summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        #track-table th, #track-table td, #summary-table th, #summary-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+        #track-table th, #summary-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+        #track-table td:nth-child(3), #track-table td:nth-child(4),
+        #summary-table td:nth-child(2) {
+            text-align: right;
+        }
+        #track-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        .section-heading {
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .charts-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .charts-grid iframe {
+            max-width: 100%;
+        }
+    </style>
 </head>
 <body>
     <main class="container">
-        <section class="project-header">
+        <section class="project-header header-teal">
             <h1>1000 Miles</h1>
-            <p>Brief description of the project</p>
+            <p>Riding 1,000 miles with 10,000 feet of climbing in 2025</p>
         </section>
 
         <section class="project-details">
-            <img src="/assets/images/1000miles.png" alt="Project Image" class="project-image-full">
-            <h2>Project Details</h2>
-            <p>Detailed description of the project goes here. This can include information about the challenge, the route, the distance, elevation gain, or any other relevant details.</p>
-            <h3>Key Points</h3>
-            <ul>
-                <li>Point 1</li>
-                <li>Point 2</li>
-                <li>Point 3</li>
-                <a href="1000-miles-map.html" class="button">
-                    <span>View Map</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </a>
-            </ul>
-            <iframe width="256" height="255" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=1360308132&amp;format=interactive"></iframe>
-            <iframe width="224" height="255" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=299503277&amp;format=interactive"></iframe>
-            <iframe width="600" height="370" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=1526055458&amp;format=interactive"></iframe>
-            <iframe width="600" height="370" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=1983673818&amp;format=interactive"></iframe>
-            <iframe width="600" height="370" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=790334448&amp;format=interactive"></iframe>
-            <br>
+          
+
+            <div id="map"></div>
+
+            <h2 class="section-heading">Summary</h2>
+            <table id="summary-table">
+                <thead>
+                    <tr>
+                        <th>Summary</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Number of Tracks</td>
+                        <td id="total-tracks">0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Distance (miles)</td>
+                        <td id="total-distance">0</td>
+                    </tr>
+                    <tr>
+                        <td>Total Elevation Gain (feet)</td>
+                        <td id="total-elevation">0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 class="section-heading">Progress Charts</h2>
+            <div class="charts-grid">
+                <iframe width="256" height="255" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=1360308132&amp;format=interactive"></iframe>
+                <iframe width="224" height="255" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=299503277&amp;format=interactive"></iframe>
+                <iframe width="600" height="370" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=1526055458&amp;format=interactive"></iframe>
+                <iframe width="600" height="370" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=1983673818&amp;format=interactive"></iframe>
+                <iframe width="600" height="370" seamless frameborder="0" scrolling="no" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSeQG1QBtyqlqkyZZXyv8NV_RmODF8MIvmfIvyXF3i351tIhxRdC1J--4Sz99IAAM2d_R5oFICvreaV/pubchart?oid=790334448&amp;format=interactive"></iframe>
+            </div>
+
+            <h2 class="section-heading">Rides</h2>
+            <table id="track-table">
+                <thead>
+                    <tr>
+                        <th>Track</th>
+                        <th>Date</th>
+                        <th>Distance (miles)</th>
+                        <th>Elevation Gain (feet)</th>
+                    </tr>
+                </thead>
+                <tbody id="track-table-body">
+                </tbody>
+            </table>
+
             <a href="index.html" class="back-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                 Back to Projects
@@ -42,7 +116,7 @@
 
     <footer>
         <div class="footer-content">
-           
+
             <nav>
                 <a href="#">---</a>
                 <a href="#">---</a>
@@ -51,8 +125,69 @@
             <p>This page was last updated on: <span id="last-updated"></span></p>
 
     <script src="script.js"></script>
-    
+
         </div>
     </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([53.615, -1.910], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var colors = ['red', 'blue', 'green', 'black', 'yellow'];
+
+        function formatDate(dateStr) {
+            if (!dateStr) return 'N/A';
+            var d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        fetch('data/tracks.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var bounds = L.latLngBounds();
+
+                data.tracks.forEach(function(track, index) {
+                    var latlngs = track.coordinates.map(function(c) { return [c[0], c[1]]; });
+                    var color = colors[index % colors.length];
+
+                    var polyline = L.polyline(latlngs, {
+                        color: color,
+                        opacity: 0.75,
+                        weight: 3,
+                        lineCap: 'round'
+                    }).addTo(map);
+
+                    polyline.bindPopup(
+                        '<b>Track ' + track.id + '</b><br>' +
+                        'Date: ' + formatDate(track.date) + '<br>' +
+                        'Distance: ' + track.distance_miles.toFixed(2) + ' miles<br>' +
+                        'Elevation Gain: ' + track.elevation_feet.toFixed(0) + ' feet'
+                    );
+
+                    bounds.extend(latlngs);
+                });
+
+                map.fitBounds(bounds);
+
+                // Populate summary
+                document.getElementById('total-tracks').textContent = data.summary.total_tracks;
+                document.getElementById('total-distance').textContent = data.summary.total_distance_miles.toFixed(2);
+                document.getElementById('total-elevation').textContent = data.summary.total_elevation_feet.toFixed(0);
+
+                // Populate track table
+                var tableBody = document.getElementById('track-table-body');
+                data.tracks.forEach(function(track) {
+                    var row = tableBody.insertRow();
+                    row.insertCell(0).textContent = track.id;
+                    row.insertCell(1).textContent = formatDate(track.date);
+                    row.insertCell(2).textContent = track.distance_miles.toFixed(2);
+                    row.insertCell(3).textContent = track.elevation_feet.toFixed(0);
+                });
+            });
+    </script>
 </body>
 </html>
