@@ -42,6 +42,67 @@
             text-decoration: underline;
         }
 
+        /* VeloViewer Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: #212529;
+        }
+        .modal-body {
+            padding: 1rem;
+        }
+        .modal-body iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+        .profile-link {
+            cursor: pointer;
+        }
+
         /* Rides Table */
         .rides-section {
             margin-top: 3rem;
@@ -144,10 +205,24 @@
                         <th>Ascent (ft)</th>
                         <th>Gradient (%)</th>
                         <th>Strava</th>
+                        <th>Profile</th>
                     </tr>
                 </thead>
                 <tbody id="climbs-body"></tbody>
             </table>
+
+            <!-- VeloViewer Modal -->
+            <div id="veloviewer-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-title">Elevation Profile</h3>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="veloviewer-iframe" src="about:blank"></iframe>
+                    </div>
+                </div>
+            </div>
             <section class="rides-section">
                 <h2>Rides</h2>
                 <p>Rides that contributed to completing the Facey Fifty challenge.</p>
@@ -214,6 +289,39 @@
         var colors = ['#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4',
                       '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990'];
 
+        // Modal functions
+        function openModal(climbName, veloviewerUrl) {
+            var modal = document.getElementById('veloviewer-modal');
+            var title = document.getElementById('modal-title');
+            var iframe = document.getElementById('veloviewer-iframe');
+
+            title.textContent = climbName.replace(/^No \d+ - /, '');
+            iframe.src = veloviewerUrl;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('veloviewer-modal');
+            var iframe = document.getElementById('veloviewer-iframe');
+
+            modal.classList.remove('active');
+            iframe.src = 'about:blank'; // Clear iframe to stop loading
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('veloviewer-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
         fetch('data/facey_fifty.json')
             .then(function(r) { return r.json(); })
             .then(function(data) {
@@ -265,6 +373,20 @@
                         a.textContent = 'View';
                         linkCell.appendChild(a);
                     }
+
+                    // Profile column with VeloViewer link
+                    var profileCell = row.insertCell(6);
+                    if (climb.veloviewer_urls && climb.veloviewer_urls.length) {
+                        var profileLink = document.createElement('a');
+                        profileLink.href = '#';
+                        profileLink.className = 'profile-link';
+                        profileLink.textContent = 'View';
+                        profileLink.onclick = function(e) {
+                            e.preventDefault();
+                            openModal(climb.name, climb.veloviewer_urls[0]);
+                        };
+                        profileCell.appendChild(profileLink);
+                    }
                 });
 
                 if (bounds.isValid()) {
@@ -281,14 +403,24 @@
         const RIDE_COLOR = '#059669'; // Green color for ride tracks
 
         async function loadRides() {
+            console.log('Loading rides...');
             try {
                 // Fetch rides list and GeoJSON in parallel
                 const [ridesRes, geoRes] = await Promise.all([
                     fetch(`${API_BASE}/rides`),
                     fetch(`${API_BASE}/rides/geojson`)
                 ]);
+
+                console.log('Rides response:', ridesRes.status);
+                console.log('GeoJSON response:', geoRes.status);
+
+                console.log('Parsing rides JSON...');
                 const ridesData = await ridesRes.json();
+                console.log('Rides JSON parsed, count:', ridesData.rides?.length);
+
+                console.log('Parsing GeoJSON...');
                 const geoData = await geoRes.json();
+                console.log('GeoJSON parsed, features:', geoData.features?.length);
 
                 allRides = ridesData.rides || [];
 
@@ -302,9 +434,10 @@
 
                 populateYearFilter();
                 renderRidesTable();
+                console.log('Rides loaded successfully');
             } catch (err) {
                 console.error('Error loading rides:', err);
-                document.getElementById('rides-summary').textContent = 'Error loading rides';
+                document.getElementById('rides-summary').textContent = 'Error loading rides: ' + err.message;
             }
         }
 
@@ -439,11 +572,7 @@
         }
 
         // Load rides on page load
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadRides);
-        } else {
-            loadRides();
-        }
+        loadRides();
     </script>
 </body>
 </html>
