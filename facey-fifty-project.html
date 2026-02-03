@@ -41,6 +41,89 @@
         #climbs-table a:hover {
             text-decoration: underline;
         }
+
+        /* Rides Table */
+        .rides-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .rides-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls label {
+            font-size: 0.9rem;
+            color: #495057;
+        }
+
+        .filter-controls select {
+            padding: 0.4rem 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        #rides-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        #rides-table th, #rides-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+
+        #rides-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        #rides-table td:nth-child(4),
+        #rides-table td:nth-child(5) {
+            text-align: right;
+        }
+
+        #rides-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        #rides-table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        #rides-table th:first-child,
+        #rides-table td:first-child {
+            width: 40px;
+            text-align: center;
+        }
+
+        .filter-controls input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .rides-summary {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -65,6 +148,35 @@
                 </thead>
                 <tbody id="climbs-body"></tbody>
             </table>
+            <section class="rides-section">
+                <h2>Rides</h2>
+                <p>Rides that contributed to completing the Facey Fifty challenge.</p>
+                <div class="filter-controls">
+                    <label for="year-filter">Filter by year:</label>
+                    <select id="year-filter">
+                        <option value="all">All years</option>
+                    </select>
+                    <label>
+                        <input type="checkbox" id="select-all-rides">
+                        Show all on map
+                    </label>
+                </div>
+                <p class="rides-summary" id="rides-summary">Loading rides...</p>
+                <table id="rides-table">
+                    <thead>
+                        <tr>
+                            <th>Map</th>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Distance (miles)</th>
+                            <th>Elevation (feet)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rides-table-body">
+                    </tbody>
+                </table>
+            </section>
+
             <a href="https://www.facey-fifty.uk/" class="button" target="_blank">
                 <span>View Facey Fifty website</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -86,7 +198,7 @@
             </nav>
             <p>This page was last updated on: <span id="last-updated"></span></p>
 
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
 
         </div>
     </footer>
@@ -159,6 +271,179 @@
                     map.fitBounds(bounds, { padding: [20, 20] });
                 }
             });
+
+        // Rides functionality
+        const API_BASE = 'https://map.phillongworth.site/bridleway/api';
+        let allRides = [];
+        let ridesGeoJSON = {};
+        let rideLayers = {};
+        let currentYearFilter = 'all';
+        const RIDE_COLOR = '#059669'; // Green color for ride tracks
+
+        async function loadRides() {
+            try {
+                // Fetch rides list and GeoJSON in parallel
+                const [ridesRes, geoRes] = await Promise.all([
+                    fetch(`${API_BASE}/rides`),
+                    fetch(`${API_BASE}/rides/geojson`)
+                ]);
+                const ridesData = await ridesRes.json();
+                const geoData = await geoRes.json();
+
+                allRides = ridesData.rides || [];
+
+                // Index GeoJSON features by filename for quick lookup
+                geoData.features.forEach(feature => {
+                    ridesGeoJSON[feature.properties.filename] = feature;
+                });
+
+                // Sort rides by date (newest first)
+                allRides.sort((a, b) => new Date(b.date_recorded) - new Date(a.date_recorded));
+
+                populateYearFilter();
+                renderRidesTable();
+            } catch (err) {
+                console.error('Error loading rides:', err);
+                document.getElementById('rides-summary').textContent = 'Error loading rides';
+            }
+        }
+
+        function populateYearFilter() {
+            const years = new Set();
+            allRides.forEach(ride => {
+                const year = new Date(ride.date_recorded).getFullYear();
+                years.add(year);
+            });
+
+            const sortedYears = Array.from(years).sort((a, b) => b - a);
+            const select = document.getElementById('year-filter');
+
+            sortedYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', (e) => {
+                currentYearFilter = e.target.value;
+                // Uncheck select all when year changes
+                document.getElementById('select-all-rides').checked = false;
+                renderRidesTable();
+            });
+
+            // Setup select all checkbox
+            document.getElementById('select-all-rides').addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                const checkboxes = document.querySelectorAll('#rides-table-body input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    if (cb.checked !== isChecked) {
+                        cb.checked = isChecked;
+                        toggleRideOnMap(cb.dataset.filename, isChecked);
+                    }
+                });
+            });
+        }
+
+        function toggleRideOnMap(filename, show) {
+            if (show) {
+                // Add ride to map
+                const feature = ridesGeoJSON[filename];
+                if (feature && feature.geometry) {
+                    const layer = L.geoJSON(feature, {
+                        style: {
+                            color: RIDE_COLOR,
+                            weight: 3,
+                            opacity: 0.8
+                        }
+                    });
+                    const dateStr = new Date(feature.properties.date_recorded).toLocaleDateString('en-GB');
+                    const distMiles = (feature.properties.distance_km * 0.621371).toFixed(2);
+                    layer.bindPopup(`<b>${dateStr}</b><br>Distance: ${distMiles} miles`);
+                    layer.addTo(map);
+                    rideLayers[filename] = layer;
+                }
+            } else {
+                // Remove ride from map
+                if (rideLayers[filename]) {
+                    map.removeLayer(rideLayers[filename]);
+                    delete rideLayers[filename];
+                }
+            }
+        }
+
+        function renderRidesTable() {
+            const tableBody = document.getElementById('rides-table-body');
+            const summary = document.getElementById('rides-summary');
+            tableBody.innerHTML = '';
+
+            // Clear all ride layers from map when re-rendering
+            Object.keys(rideLayers).forEach(filename => {
+                map.removeLayer(rideLayers[filename]);
+            });
+            rideLayers = {};
+
+            let filteredRides = allRides;
+            if (currentYearFilter !== 'all') {
+                filteredRides = allRides.filter(ride => {
+                    const year = new Date(ride.date_recorded).getFullYear();
+                    return year === parseInt(currentYearFilter);
+                });
+            }
+
+            let totalDistance = 0;
+            let totalElevation = 0;
+
+            filteredRides.forEach((ride, index) => {
+                const date = new Date(ride.date_recorded);
+                const dateStr = date.toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                const distanceMiles = (ride.distance_km * 0.621371).toFixed(2);
+                const elevationFeet = (ride.elevation_gain_m * 3.28084).toFixed(0);
+
+                totalDistance += ride.distance_km * 0.621371;
+                totalElevation += ride.elevation_gain_m * 3.28084;
+
+                const row = tableBody.insertRow();
+
+                // Checkbox cell
+                const checkCell = row.insertCell(0);
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.dataset.filename = ride.filename;
+                checkbox.addEventListener('change', (e) => {
+                    toggleRideOnMap(ride.filename, e.target.checked);
+                    // Update select all checkbox state
+                    updateSelectAllState();
+                });
+                checkCell.appendChild(checkbox);
+
+                row.insertCell(1).textContent = index + 1;
+                row.insertCell(2).textContent = dateStr;
+                row.insertCell(3).textContent = distanceMiles;
+                row.insertCell(4).textContent = elevationFeet;
+            });
+
+            const yearText = currentYearFilter === 'all' ? 'all time' : currentYearFilter;
+            summary.textContent = `${filteredRides.length} rides for ${yearText} | Total: ${totalDistance.toFixed(1)} miles, ${totalElevation.toFixed(0)} ft elevation`;
+        }
+
+        function updateSelectAllState() {
+            const checkboxes = document.querySelectorAll('#rides-table-body input[type="checkbox"]');
+            const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('select-all-rides').checked = allChecked;
+        }
+
+        // Load rides on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadRides);
+        } else {
+            loadRides();
+        }
     </script>
 </body>
 </html>
