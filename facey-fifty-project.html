@@ -400,45 +400,50 @@
         let ridesGeoJSON = {};
         let rideLayers = {};
         let currentYearFilter = 'all';
+        let geoJSONLoaded = false;
+        let geoJSONLoading = false;
         const RIDE_COLOR = '#059669'; // Green color for ride tracks
 
         async function loadRides() {
-            console.log('Loading rides...');
             try {
-                // Fetch rides list and GeoJSON in parallel
-                const [ridesRes, geoRes] = await Promise.all([
-                    fetch(`${API_BASE}/rides`),
-                    fetch(`${API_BASE}/rides/geojson`)
-                ]);
-
-                console.log('Rides response:', ridesRes.status);
-                console.log('GeoJSON response:', geoRes.status);
-
-                console.log('Parsing rides JSON...');
+                // Load rides list first (small payload)
+                const ridesRes = await fetch(`${API_BASE}/rides`);
                 const ridesData = await ridesRes.json();
-                console.log('Rides JSON parsed, count:', ridesData.rides?.length);
-
-                console.log('Parsing GeoJSON...');
-                const geoData = await geoRes.json();
-                console.log('GeoJSON parsed, features:', geoData.features?.length);
 
                 allRides = ridesData.rides || [];
-
-                // Index GeoJSON features by filename for quick lookup
-                geoData.features.forEach(feature => {
-                    ridesGeoJSON[feature.properties.filename] = feature;
-                });
 
                 // Sort rides by date (newest first)
                 allRides.sort((a, b) => new Date(b.date_recorded) - new Date(a.date_recorded));
 
                 populateYearFilter();
                 renderRidesTable();
-                console.log('Rides loaded successfully');
+
+                // Load GeoJSON in background (large payload)
+                loadGeoJSONInBackground();
             } catch (err) {
                 console.error('Error loading rides:', err);
                 document.getElementById('rides-summary').textContent = 'Error loading rides: ' + err.message;
             }
+        }
+
+        async function loadGeoJSONInBackground() {
+            if (geoJSONLoading || geoJSONLoaded) return;
+            geoJSONLoading = true;
+
+            try {
+                const geoRes = await fetch(`${API_BASE}/rides/geojson`);
+                const geoData = await geoRes.json();
+
+                // Index GeoJSON features by filename for quick lookup
+                geoData.features.forEach(feature => {
+                    ridesGeoJSON[feature.properties.filename] = feature;
+                });
+
+                geoJSONLoaded = true;
+            } catch (err) {
+                console.error('Error loading GeoJSON:', err);
+            }
+            geoJSONLoading = false;
         }
 
         function populateYearFilter() {
@@ -480,6 +485,11 @@
 
         function toggleRideOnMap(filename, show) {
             if (show) {
+                // Check if GeoJSON is loaded yet
+                if (!geoJSONLoaded) {
+                    console.log('GeoJSON still loading...');
+                    return;
+                }
                 // Add ride to map
                 const feature = ridesGeoJSON[filename];
                 if (feature && feature.geometry) {

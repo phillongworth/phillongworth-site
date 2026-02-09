@@ -15,7 +15,8 @@
       "WebFetch(domain:calderdale50.wordpress.com)",
       "WebFetch(domain:www.doogal.co.uk)",
       "Bash(curl:*)",
-      "Bash(docker compose up:*)"
+      "Bash(docker compose up:*)",
+      "WebFetch(domain:map.phillongworth.site)"
     ]
   }
 }
