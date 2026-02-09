@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" creator="www.plotaroute.com" version="1.1"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata>
+<desc>Route created on plotaroute.com</desc>
+</metadata>
+<wpt lat="53.6746" lon="-1.9015">
+<time>2026-01-28T00:00:00Z</time>
+<name>Start near</name>
+<cmt>Start near 75 Stainland Road, Barkisland, Halifax, West Yorkshire HX4 0AQ, UK</cmt>
+<desc>Start near 75 Stainland Road, Barkisland, Halifax, West Yorkshire HX4 0AQ, UK</desc>
+<sym>Flag, Blue</sym>
+<type>Waypoint</type>
+</wpt>
+<wpt lat="53.6746" lon="-1.9015">
+<time>2026-01-28T00:00:00Z</time>
+<name>Head west </name>
+<cmt>Head west on Stainland Rd toward Branch Rd/B6114</cmt>
+<desc>Head west on Stainland Rd toward Branch Rd/B6114</desc>
+<sym>Straight</sym>
+<type>Waypoint</type>
+</wpt>
+<wpt lat="53.67466" lon="-1.90744">
+<time>2026-01-28T00:01:12Z</time>
+<name>Head west </name>
+<cmt>Head west on Stainland Rd toward Sandyfoot</cmt>
+<desc>Head west on Stainland Rd toward Sandyfoot</desc>
+<sym>Straight</sym>
+<type>Waypoint</type>
+</wpt>
+<wpt lat="53.67624" lon="-1.91749">
+<time>2026-01-28T00:03:16Z</time>
+<name>FINISH</name>
+<cmt>FINISH</cmt>
+<desc>FINISH</desc>
+<sym>Flag, Blue</sym>
+<type>Waypoint</type>
+</wpt>
+<trk>
+<name>Barkisland</name>
+<trkseg>
+<trkpt lat="53.6746" lon="-1.9015">
+<ele>116</ele>
+<time>2026-01-28T00:00:00Z</time></trkpt>
+<trkpt lat="53.6746" lon="-1.9015">
+<ele>116</ele>
+<time>2026-01-28T00:00:00Z</time></trkpt>
+<trkpt lat="53.67453" lon="-1.90202">
+<ele>116</ele>
+<time>2026-01-28T00:00:06Z</time></trkpt>
+<trkpt lat="53.67448" lon="-1.90237">
+<ele>119</ele>
+<time>2026-01-28T00:00:11Z</time></trkpt>
+<trkpt lat="53.67444" lon="-1.90297">
+<ele>124</ele>
+<time>2026-01-28T00:00:18Z</time></trkpt>
+<trkpt lat="53.67442" lon="-1.90341">
+<ele>128</ele>
+<time>2026-01-28T00:00:23Z</time></trkpt>
+<trkpt lat="53.67442" lon="-1.90358">
+<ele>129</ele>
+<time>2026-01-28T00:00:25Z</time></trkpt>
+<trkpt lat="53.67442" lon="-1.90375">
+<ele>131</ele>
+<time>2026-01-28T00:00:27Z</time></trkpt>
+<trkpt lat="53.67443" lon="-1.90391">
+<ele>132</ele>
+<time>2026-01-28T00:00:29Z</time></trkpt>
+<trkpt lat="53.67448" lon="-1.90418">
+<ele>136</ele>
+<time>2026-01-28T00:00:32Z</time></trkpt>
+<trkpt lat="53.67458" lon="-1.90476">
+<ele>142</ele>
+<time>2026-01-28T00:00:39Z</time></trkpt>
+<trkpt lat="53.67464" lon="-1.90518">
+<ele>146</ele>
+<time>2026-01-28T00:00:45Z</time></trkpt>
+<trkpt lat="53.67467" lon="-1.90542">
+<ele>148</ele>
+<time>2026-01-28T00:00:48Z</time></trkpt>
+<trkpt lat="53.67469" lon="-1.90563">
+<ele>150</ele>
+<time>2026-01-28T00:00:50Z</time></trkpt>
+<trkpt lat="53.67469" lon="-1.90564">
+<ele>150</ele>
+<time>2026-01-28T00:00:50Z</time></trkpt>
+<trkpt lat="53.67467" lon="-1.90591">
+<ele>152</ele>
+<time>2026-01-28T00:00:53Z</time></trkpt>
+<trkpt lat="53.67465" lon="-1.90633">
+<ele>154</ele>
+<time>2026-01-28T00:00:58Z</time></trkpt>
+<trkpt lat="53.67464" lon="-1.9066">
+<ele>156</ele>
+<time>2026-01-28T00:01:02Z</time></trkpt>
+<trkpt lat="53.67466" lon="-1.90744">
+<ele>160</ele>
+<time>2026-01-28T00:01:12Z</time></trkpt>
+<trkpt lat="53.67466" lon="-1.90744">
+<ele>160</ele>
+<time>2026-01-28T00:01:12Z</time></trkpt>
+<trkpt lat="53.67467" lon="-1.90786">
+<ele>162</ele>
+<time>2026-01-28T00:01:17Z</time></trkpt>
+<trkpt lat="53.67469" lon="-1.90824">
+<ele>164</ele>
+<time>2026-01-28T00:01:21Z</time></trkpt>
+<trkpt lat="53.67472" lon="-1.90839">
+<ele>165</ele>
+<time>2026-01-28T00:01:23Z</time></trkpt>
+<trkpt lat="53.67475" lon="-1.9085">
+<ele>167</ele>
+<time>2026-01-28T00:01:24Z</time></trkpt>
+<trkpt lat="53.67481" lon="-1.90873">
+<ele>169</ele>
+<time>2026-01-28T00:01:27Z</time></trkpt>
+<trkpt lat="53.67487" lon="-1.90893">
+<ele>171</ele>
+<time>2026-01-28T00:01:30Z</time></trkpt>
+<trkpt lat="53.67492" lon="-1.90908">
+<ele>173</ele>
+<time>2026-01-28T00:01:32Z</time></trkpt>
+<trkpt lat="53.67508" lon="-1.90959">
+<ele>179</ele>
+<time>2026-01-28T00:01:39Z</time></trkpt>
+<trkpt lat="53.67517" lon="-1.90993">
+<ele>182</ele>
+<time>2026-01-28T00:01:43Z</time></trkpt>
+<trkpt lat="53.67524" lon="-1.91031">
+<ele>185</ele>
+<time>2026-01-28T00:01:48Z</time></trkpt>
+<trkpt lat="53.6753" lon="-1.91059">
+<ele>187</ele>
+<time>2026-01-28T00:01:52Z</time></trkpt>
+<trkpt lat="53.67536" lon="-1.91085">
+<ele>189</ele>
+<time>2026-01-28T00:01:55Z</time></trkpt>
+<trkpt lat="53.67542" lon="-1.91107">
+<ele>191</ele>
+<time>2026-01-28T00:01:58Z</time></trkpt>
+<trkpt lat="53.67548" lon="-1.91127">
+<ele>193</ele>
+<time>2026-01-28T00:02:00Z</time></trkpt>
+<trkpt lat="53.67558" lon="-1.91164">
+<ele>195</ele>
+<time>2026-01-28T00:02:05Z</time></trkpt>
+<trkpt lat="53.67559" lon="-1.9117">
+<ele>195</ele>
+<time>2026-01-28T00:02:06Z</time></trkpt>
+<trkpt lat="53.67561" lon="-1.9118">
+<ele>196</ele>
+<time>2026-01-28T00:02:07Z</time></trkpt>
+<trkpt lat="53.67566" lon="-1.91204">
+<ele>198</ele>
+<time>2026-01-28T00:02:10Z</time></trkpt>
+<trkpt lat="53.67578" lon="-1.91276">
+<ele>202</ele>
+<time>2026-01-28T00:02:19Z</time></trkpt>
+<trkpt lat="53.67584" lon="-1.91319">
+<ele>206</ele>
+<time>2026-01-28T00:02:24Z</time></trkpt>
+<trkpt lat="53.67589" lon="-1.91351">
+<ele>207</ele>
+<time>2026-01-28T00:02:28Z</time></trkpt>
+<trkpt lat="53.67594" lon="-1.91379">
+<ele>209</ele>
+<time>2026-01-28T00:02:32Z</time></trkpt>
+<trkpt lat="53.67601" lon="-1.91424">
+<ele>211</ele>
+<time>2026-01-28T00:02:37Z</time></trkpt>
+<trkpt lat="53.67602" lon="-1.9143">
+<ele>211</ele>
+<time>2026-01-28T00:02:38Z</time></trkpt>
+<trkpt lat="53.67606" lon="-1.91485">
+<ele>215</ele>
+<time>2026-01-28T00:02:45Z</time></trkpt>
+<trkpt lat="53.67611" lon="-1.91553">
+<ele>218</ele>
+<time>2026-01-28T00:02:53Z</time></trkpt>
+<trkpt lat="53.67613" lon="-1.91569">
+<ele>219</ele>
+<time>2026-01-28T00:02:55Z</time></trkpt>
+<trkpt lat="53.67615" lon="-1.91587">
+<ele>219</ele>
+<time>2026-01-28T00:02:57Z</time></trkpt>
+<trkpt lat="53.6762" lon="-1.91677">
+<ele>222</ele>
+<time>2026-01-28T00:03:08Z</time></trkpt>
+<trkpt lat="53.67624" lon="-1.91749">
+<ele>226</ele>
+<time>2026-01-28T00:03:16Z</time></trkpt>
+</trkseg>
+</trk>
+</gpx>

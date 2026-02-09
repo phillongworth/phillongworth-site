@@ -1,0 +1,62 @@
+# Unified Docker Compose for phillongworth-site
+#
+# Services:
+#   - portfolio: Static site (Nginx) on port 80
+#   - bridleway-api: FastAPI backend on port 6080
+#   - db: PostgreSQL with PostGIS
+#
+# Usage:
+#   docker compose up -d              # Start all services
+#   docker compose up -d portfolio    # Start only the static site
+#   docker compose up -d bridleway-api db  # Start bridleway-log with database
+
+services:
+  # Static portfolio site served by Nginx
+  portfolio:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./apps/portfolio:/usr/share/nginx/html:ro
+      - ./shared/css:/usr/share/nginx/html/shared/css:ro
+      - ./shared/js:/usr/share/nginx/html/shared/js:ro
+      - ./data:/usr/share/nginx/html/data:ro
+    restart: unless-stopped
+
+  # Bridleway Log FastAPI backend
+  bridleway-api:
+    build: ./apps/bridleway-log/backend
+    ports:
+      - "6080:8000"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-bridleway}:${POSTGRES_PASSWORD:-changeme}@db:5432/${POSTGRES_DB:-bridleway_log}
+      - POSTGRES_USER=${POSTGRES_USER:-bridleway}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+      - POSTGRES_DB=${POSTGRES_DB:-bridleway_log}
+    volumes:
+      - ./data:/data:ro
+      - ./apps/bridleway-log/frontend:/app/static:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # PostgreSQL with PostGIS extension
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-bridleway}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-changeme}
+      - POSTGRES_DB=${POSTGRES_DB:-bridleway_log}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bridleway} -d ${POSTGRES_DB:-bridleway_log}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    name: phillongworth-pgdata

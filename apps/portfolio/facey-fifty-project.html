@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cycling Log - Facey Fifty</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        #climbs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+        #climbs-table th, #climbs-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+        #climbs-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+        #climbs-table td:nth-child(3),
+        #climbs-table td:nth-child(4),
+        #climbs-table td:nth-child(5) {
+            text-align: right;
+        }
+        #climbs-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+        #climbs-table a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        #climbs-table a:hover {
+            text-decoration: underline;
+        }
+
+        /* VeloViewer Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            line-height: 1;
+        }
+        .modal-close:hover {
+            color: #212529;
+        }
+        .modal-body {
+            padding: 1rem;
+        }
+        .modal-body iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+        }
+        .profile-link {
+            cursor: pointer;
+        }
+
+        /* Rides Table */
+        .rides-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .rides-section h2 {
+            margin-bottom: 1rem;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls label {
+            font-size: 0.9rem;
+            color: #495057;
+        }
+
+        .filter-controls select {
+            padding: 0.4rem 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        #rides-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+        }
+
+        #rides-table th, #rides-table td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+
+        #rides-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+
+        #rides-table td:nth-child(4),
+        #rides-table td:nth-child(5) {
+            text-align: right;
+        }
+
+        #rides-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        #rides-table input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        #rides-table th:first-child,
+        #rides-table td:first-child {
+            width: 40px;
+            text-align: center;
+        }
+
+        .filter-controls input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .rides-summary {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <section class="project-header header-emerald">
+            <h1>Facey Fifty</h1>
+            <p>The Facey 50 Climbs in the Colne and Holme Valleys. This challenge is based on climbs listed on the Facey Fifty website. Whih in turn is based on the book “The Only Way is Up - My 50 Climbs In the Colne and Holme valleys, Huddersfield” by Richard Facey</p>
+        </section>
+
+        <section class="project-details">
+            <div id="map"></div>
+            <table id="climbs-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Distance (mi)</th>
+                        <th>Ascent (ft)</th>
+                        <th>Gradient (%)</th>
+                        <th>Strava</th>
+                        <th>Profile</th>
+                    </tr>
+                </thead>
+                <tbody id="climbs-body"></tbody>
+            </table>
+
+            <!-- VeloViewer Modal -->
+            <div id="veloviewer-modal" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 id="modal-title">Elevation Profile</h3>
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe id="veloviewer-iframe" src="about:blank"></iframe>
+                    </div>
+                </div>
+            </div>
+            <section class="rides-section">
+                <h2>Rides</h2>
+                <p>Rides that contributed to completing the Facey Fifty challenge.</p>
+                <div class="filter-controls">
+                    <label for="year-filter">Filter by year:</label>
+                    <select id="year-filter">
+                        <option value="all">All years</option>
+                    </select>
+                    <label>
+                        <input type="checkbox" id="select-all-rides">
+                        Show all on map
+                    </label>
+                </div>
+                <p class="rides-summary" id="rides-summary">Loading rides...</p>
+                <table id="rides-table">
+                    <thead>
+                        <tr>
+                            <th>Map</th>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Distance (miles)</th>
+                            <th>Elevation (feet)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rides-table-body">
+                    </tbody>
+                </table>
+            </section>
+
+            <a href="https://www.facey-fifty.uk/" class="button" target="_blank">
+                <span>View Facey Fifty website</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+            <a href="index.html" class="back-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                Back to Projects
+            </a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+
+            <nav>
+                <a href="#">---</a>
+                <a href="#">---</a>
+
+            </nav>
+            <p>This page was last updated on: <span id="last-updated"></span></p>
+
+    <script src="js/script.js"></script>
+
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([53.60, -1.85], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var colors = ['#e6194b', '#3cb44b', '#4363d8', '#f58231', '#911eb4',
+                      '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990'];
+
+        // Modal functions
+        function openModal(climbName, veloviewerUrl) {
+            var modal = document.getElementById('veloviewer-modal');
+            var title = document.getElementById('modal-title');
+            var iframe = document.getElementById('veloviewer-iframe');
+
+            title.textContent = climbName.replace(/^No \d+ - /, '');
+            iframe.src = veloviewerUrl;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('veloviewer-modal');
+            var iframe = document.getElementById('veloviewer-iframe');
+
+            modal.classList.remove('active');
+            iframe.src = 'about:blank'; // Clear iframe to stop loading
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('veloviewer-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        fetch('data/generated/facey_fifty.json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var bounds = L.latLngBounds();
+                var tableBody = document.getElementById('climbs-body');
+
+                data.climbs.forEach(function(climb, index) {
+                    var stravaLink = climb.strava_segments && climb.strava_segments.length
+                        ? climb.strava_segments[0].url : '';
+                    var popupHtml =
+                        '<b>' + climb.name + '</b>';
+                    if (climb.distance_miles) popupHtml += '<br>Distance: ' + climb.distance_miles + ' mi';
+                    if (climb.elevation_feet) popupHtml += '<br>Ascent: ' + climb.elevation_feet + ' ft';
+                    if (climb.average_gradient_pct) popupHtml += '<br>Gradient: ' + climb.average_gradient_pct + '%';
+                    if (stravaLink) popupHtml += '<br><a href="' + stravaLink + '" target="_blank">Strava segment</a>';
+
+                    // Draw track polyline if available, otherwise fall back to marker
+                    if (climb.track && climb.track.length > 1) {
+                        var color = colors[index % colors.length];
+                        var polyline = L.polyline(climb.track, {
+                            color: color,
+                            opacity: 0.8,
+                            weight: 3
+                        }).addTo(map).bindPopup(popupHtml);
+                        bounds.extend(polyline.getBounds());
+                    } else if (climb.lat && climb.lon) {
+                        L.marker([climb.lat, climb.lon])
+                            .addTo(map)
+                            .bindPopup(popupHtml);
+                        bounds.extend([climb.lat, climb.lon]);
+                    }
+
+                    // Table row
+                    var row = tableBody.insertRow();
+                    row.insertCell(0).textContent = climb.number;
+
+                    var nameCell = row.insertCell(1);
+                    nameCell.textContent = climb.name.replace(/^No \d+ - /, '');
+
+                    row.insertCell(2).textContent = climb.distance_miles;
+                    row.insertCell(3).textContent = climb.elevation_feet;
+                    row.insertCell(4).textContent = climb.average_gradient_pct;
+
+                    var linkCell = row.insertCell(5);
+                    if (climb.strava_segments && climb.strava_segments.length) {
+                        var a = document.createElement('a');
+                        a.href = climb.strava_segments[0].url;
+                        a.target = '_blank';
+                        a.textContent = 'View';
+                        linkCell.appendChild(a);
+                    }
+
+                    // Profile column with VeloViewer link
+                    var profileCell = row.insertCell(6);
+                    if (climb.veloviewer_urls && climb.veloviewer_urls.length) {
+                        var profileLink = document.createElement('a');
+                        profileLink.href = '#';
+                        profileLink.className = 'profile-link';
+                        profileLink.textContent = 'View';
+                        profileLink.onclick = function(e) {
+                            e.preventDefault();
+                            openModal(climb.name, climb.veloviewer_urls[0]);
+                        };
+                        profileCell.appendChild(profileLink);
+                    }
+                });
+
+                if (bounds.isValid()) {
+                    map.fitBounds(bounds, { padding: [20, 20] });
+                }
+            });
+
+        // Rides functionality
+        const API_BASE = 'https://map.phillongworth.site/bridleway/api';
+        let allRides = [];
+        let ridesGeoJSON = {};
+        let rideLayers = {};
+        let currentYearFilter = 'all';
+        let geoJSONLoaded = false;
+        let geoJSONLoading = false;
+        const RIDE_COLOR = '#059669'; // Green color for ride tracks
+
+        async function loadRides() {
+            try {
+                // Load rides list first (small payload)
+                const ridesRes = await fetch(`${API_BASE}/rides`);
+                const ridesData = await ridesRes.json();
+
+                allRides = ridesData.rides || [];
+
+                // Sort rides by date (newest first)
+                allRides.sort((a, b) => new Date(b.date_recorded) - new Date(a.date_recorded));
+
+                populateYearFilter();
+                renderRidesTable();
+
+                // Load GeoJSON in background (large payload)
+                loadGeoJSONInBackground();
+            } catch (err) {
+                console.error('Error loading rides:', err);
+                document.getElementById('rides-summary').textContent = 'Error loading rides: ' + err.message;
+            }
+        }
+
+        async function loadGeoJSONInBackground() {
+            if (geoJSONLoading || geoJSONLoaded) return;
+            geoJSONLoading = true;
+
+            try {
+                const geoRes = await fetch(`${API_BASE}/rides/geojson`);
+                const geoData = await geoRes.json();
+
+                // Index GeoJSON features by filename for quick lookup
+                geoData.features.forEach(feature => {
+                    ridesGeoJSON[feature.properties.filename] = feature;
+                });
+
+                geoJSONLoaded = true;
+            } catch (err) {
+                console.error('Error loading GeoJSON:', err);
+            }
+            geoJSONLoading = false;
+        }
+
+        function populateYearFilter() {
+            const years = new Set();
+            allRides.forEach(ride => {
+                const year = new Date(ride.date_recorded).getFullYear();
+                years.add(year);
+            });
+
+            const sortedYears = Array.from(years).sort((a, b) => b - a);
+            const select = document.getElementById('year-filter');
+
+            sortedYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                select.appendChild(option);
+            });
+
+            select.addEventListener('change', (e) => {
+                currentYearFilter = e.target.value;
+                // Uncheck select all when year changes
+                document.getElementById('select-all-rides').checked = false;
+                renderRidesTable();
+            });
+
+            // Setup select all checkbox
+            document.getElementById('select-all-rides').addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                const checkboxes = document.querySelectorAll('#rides-table-body input[type="checkbox"]');
+                checkboxes.forEach(cb => {
+                    if (cb.checked !== isChecked) {
+                        cb.checked = isChecked;
+                        toggleRideOnMap(cb.dataset.filename, isChecked);
+                    }
+                });
+            });
+        }
+
+        function toggleRideOnMap(filename, show) {
+            if (show) {
+                // Check if GeoJSON is loaded yet
+                if (!geoJSONLoaded) {
+                    console.log('GeoJSON still loading...');
+                    return;
+                }
+                // Add ride to map
+                const feature = ridesGeoJSON[filename];
+                if (feature && feature.geometry) {
+                    const layer = L.geoJSON(feature, {
+                        style: {
+                            color: RIDE_COLOR,
+                            weight: 3,
+                            opacity: 0.8
+                        }
+                    });
+                    const dateStr = new Date(feature.properties.date_recorded).toLocaleDateString('en-GB');
+                    const distMiles = (feature.properties.distance_km * 0.621371).toFixed(2);
+                    layer.bindPopup(`<b>${dateStr}</b><br>Distance: ${distMiles} miles`);
+                    layer.addTo(map);
+                    rideLayers[filename] = layer;
+                }
+            } else {
+                // Remove ride from map
+                if (rideLayers[filename]) {
+                    map.removeLayer(rideLayers[filename]);
+                    delete rideLayers[filename];
+                }
+            }
+        }
+
+        function renderRidesTable() {
+            const tableBody = document.getElementById('rides-table-body');
+            const summary = document.getElementById('rides-summary');
+            tableBody.innerHTML = '';
+
+            // Clear all ride layers from map when re-rendering
+            Object.keys(rideLayers).forEach(filename => {
+                map.removeLayer(rideLayers[filename]);
+            });
+            rideLayers = {};
+
+            let filteredRides = allRides;
+            if (currentYearFilter !== 'all') {
+                filteredRides = allRides.filter(ride => {
+                    const year = new Date(ride.date_recorded).getFullYear();
+                    return year === parseInt(currentYearFilter);
+                });
+            }
+
+            let totalDistance = 0;
+            let totalElevation = 0;
+
+            filteredRides.forEach((ride, index) => {
+                const date = new Date(ride.date_recorded);
+                const dateStr = date.toLocaleDateString('en-GB', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                const distanceMiles = (ride.distance_km * 0.621371).toFixed(2);
+                const elevationFeet = (ride.elevation_gain_m * 3.28084).toFixed(0);
+
+                totalDistance += ride.distance_km * 0.621371;
+                totalElevation += ride.elevation_gain_m * 3.28084;
+
+                const row = tableBody.insertRow();
+
+                // Checkbox cell
+                const checkCell = row.insertCell(0);
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.dataset.filename = ride.filename;
+                checkbox.addEventListener('change', (e) => {
+                    toggleRideOnMap(ride.filename, e.target.checked);
+                    // Update select all checkbox state
+                    updateSelectAllState();
+                });
+                checkCell.appendChild(checkbox);
+
+                row.insertCell(1).textContent = index + 1;
+                row.insertCell(2).textContent = dateStr;
+                row.insertCell(3).textContent = distanceMiles;
+                row.insertCell(4).textContent = elevationFeet;
+            });
+
+            const yearText = currentYearFilter === 'all' ? 'all time' : currentYearFilter;
+            summary.textContent = `${filteredRides.length} rides for ${yearText} | Total: ${totalDistance.toFixed(1)} miles, ${totalElevation.toFixed(0)} ft elevation`;
+        }
+
+        function updateSelectAllState() {
+            const checkboxes = document.querySelectorAll('#rides-table-body input[type="checkbox"]');
+            const allChecked = checkboxes.length > 0 && Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('select-all-rides').checked = allChecked;
+        }
+
+        // Load rides on page load
+        loadRides();
+    </script>
+</body>
+</html>

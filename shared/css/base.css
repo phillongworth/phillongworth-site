@@ -1,0 +1,101 @@
+/**
+ * Shared base styles for phillongworth-site
+ *
+ * This file contains common reset, typography, and utility classes
+ * used across all pages and applications.
+ */
+
+/* CSS Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base typography */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    color: #1a1a1a;
+    background-color: #ffffff;
+}
+
+/* Accessibility: Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* Layout container */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Common button base */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    text-decoration: none;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Footer (shared across portfolio pages) */
+footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 1.5rem 0;
+    margin-top: 2rem;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+footer p {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+footer nav {
+    display: flex;
+    gap: 1rem;
+}
+
+footer a {
+    color: #666;
+    text-decoration: none;
+    font-size: 0.75rem;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
