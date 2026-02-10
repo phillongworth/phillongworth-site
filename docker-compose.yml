@@ -1,7 +1,7 @@
 # Unified Docker Compose for phillongworth-site
 #
 # Services:
-#   - portfolio: Static site (Nginx) on port 80
+#   - portfolio: Static site (Nginx) on port 8080
 #   - bridleway-api: FastAPI backend on port 6080
 #   - db: PostgreSQL with PostGIS
 #
@@ -15,9 +15,9 @@ services:
   portfolio:
     image: nginx:alpine
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
-      - ./apps/portfolio:/usr/share/nginx/html:ro
+      - ./apps/portfolio:/usr/share/nginx/html
       - ./shared/css:/usr/share/nginx/html/shared/css:ro
       - ./shared/js:/usr/share/nginx/html/shared/js:ro
       - ./data:/usr/share/nginx/html/data:ro
