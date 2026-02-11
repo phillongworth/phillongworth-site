@@ -1,7 +1,7 @@
 """
 Build script to process GPX files into a single tracks.json for the 1000-miles map.
 
-Reads all numbered GPX files (10*.gpx) from data/gpx/1000-miles/, extracts coordinates,
+Reads all numbered GPX files (10*.gpx) from data/gpx/activities/, extracts coordinates,
 calculates distance/elevation, simplifies tracks, and outputs data/generated/tracks.json.
 
 Usage: python build_map_data.py
@@ -22,7 +22,7 @@ from geo_utils import haversine, douglas_peucker, KM_TO_MILES, METERS_TO_FEET
 
 # Paths
 DATA_DIR = os.path.join(REPO_ROOT, "data")
-GPX_DIR = os.path.join(DATA_DIR, "gpx", "1000-miles")
+GPX_DIR = os.path.join(DATA_DIR, "gpx", "activities")
 OUTPUT_FILE = os.path.join(DATA_DIR, "generated", "tracks.json")
 
 GPX_NS = "http://www.topografix.com/GPX/1/1"
@@ -45,7 +45,7 @@ def parse_gpx(filepath):
         lat = float(trkpt.get("lat"))
         lon = float(trkpt.get("lon"))
         ele_el = trkpt.find(f"{{{GPX_NS}}}ele")
-        ele = float(ele_el.text) if ele_el is not None else None
+        ele = float(ele_el.text) if (ele_el is not None and ele_el.text) else None
 
         if date is None:
             time_el = trkpt.find(f"{{{GPX_NS}}}time")

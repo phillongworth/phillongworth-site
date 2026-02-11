@@ -17,6 +17,9 @@ node_modules/
 
 # Data files (large, managed separately)
 data/gpx/rides/
+data/gpx/activities/*.gpx
+data/gpx/1000-miles/*.gpx
+data/gpxfiles/
 *.xlsx
 
 # Generated files

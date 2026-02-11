@@ -3,7 +3,7 @@
 Batch import GPX files into the database.
 
 Usage:
-    python scripts/import_gpx.py --dir /data/gpxfiles/activities
+    python scripts/import_gpx.py --dir /data/gpx/activities
 """
 
 import argparse

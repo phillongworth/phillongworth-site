@@ -12,6 +12,8 @@ import json
 import gpxpy
 import gpxpy.gpx
 import logging
+from pathlib import Path
+from datetime import datetime
 
 from app.db import get_db
 from app.models import Ride
@@ -23,10 +25,52 @@ from app.schemas import (
     CoverageRecomputeResponse
 )
 from app.services.coverage import recompute_coverage
+from app.config import GPX_STORAGE_DIR
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+
+def save_gpx_to_disk(content: bytes, filename: str, file_hash: str) -> Optional[Path]:
+    """
+    Save GPX file to disk in the configured storage directory.
+
+    Args:
+        content: The GPX file content
+        filename: Original filename
+        file_hash: SHA256 hash of the file (first 8 chars used for uniqueness)
+
+    Returns:
+        Path to saved file, or None if save failed
+    """
+    try:
+        # Ensure storage directory exists
+        GPX_STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+
+        # Create a unique filename using hash prefix and timestamp
+        # Format: YYYYMMDD_HHMMSS_hash8chars_originalname.gpx
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        hash_prefix = file_hash[:8]
+
+        # Clean the original filename (remove path, ensure .gpx extension)
+        clean_filename = Path(filename).name
+        if not clean_filename.lower().endswith('.gpx'):
+            clean_filename += '.gpx'
+
+        # Create final filename
+        final_filename = f"{timestamp}_{hash_prefix}_{clean_filename}"
+        filepath = GPX_STORAGE_DIR / final_filename
+
+        # Write file
+        filepath.write_bytes(content)
+        logger.info(f"Saved GPX file to {filepath}")
+
+        return filepath
+
+    except Exception as e:
+        logger.error(f"Failed to save GPX file to disk: {e}")
+        return None
 
 
 def parse_gpx_file(content: bytes) -> tuple[Optional[str], Optional[str], float, Optional[float]]:
@@ -164,6 +208,13 @@ async def upload_rides(
             db.add(ride)
             db.commit()
             db.refresh(ride)
+
+            # Save GPX file to disk
+            saved_path = save_gpx_to_disk(content, file.filename or "unknown.gpx", file_hash)
+            if saved_path:
+                logger.info(f"GPX file saved to {saved_path}")
+            else:
+                logger.warning(f"GPX file {file.filename} imported to database but failed to save to disk")
 
             results.append(RideUploadResult(
                 filename=file.filename or "unknown",
