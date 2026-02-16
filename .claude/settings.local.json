@@ -31,7 +31,12 @@
       "Bash(docker network:*)",
       "Bash(xargs docker network inspect:*)",
       "Bash(docker-compose down:*)",
-      "Bash(docker-compose stop:*)"
+      "Bash(docker-compose stop:*)",
+      "Bash(docker compose run:*)",
+      "Bash(sudo cp:*)",
+      "Bash(docker compose exec:*)",
+      "Bash(docker compose restart:*)",
+      "Bash(docker compose down:*)"
     ]
   }
 }

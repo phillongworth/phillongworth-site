@@ -551,7 +551,7 @@
                 const res = await fetch(`${API_BASE}/stats`);
                 const allStats = await res.json();
 
-                const areaData = allStats.by_area['Kirklees'];
+                const areaData = allStats.by_area['Calderdale'];
                 if (!areaData) {
                     panel.innerHTML = '<p>No Calderdale data available</p>';
                     return;
@@ -611,7 +611,7 @@
 
             try {
                 const params = new URLSearchParams();
-                params.append('area', 'Kirklees');
+                params.append('area', 'Calderdale');
 
                 if (riddenFilter === 'ridden') {
                     params.append('ridden', 'true');
